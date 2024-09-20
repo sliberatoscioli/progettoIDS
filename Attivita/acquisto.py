@@ -6,7 +6,7 @@ class Acquisto:
         self.prodotti = prodotti  # Una lista di oggetti Prodotto
         self.data_acquisto = data_acquisto
         self.metodo_pagamento = metodo_pagamento
-        self.codice_vendita = codice_vendita
+        self.codice_vendita = "ACQ" + str(codice_vendita)
 
     # METODI GETTER
     def get_id(self):

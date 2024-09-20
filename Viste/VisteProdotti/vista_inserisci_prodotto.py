@@ -1,5 +1,3 @@
-import os
-import sqlite3
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, \
     QHBoxLayout, QSpacerItem, QSizePolicy, QMessageBox, QComboBox
 from PyQt5.QtGui import QFont
@@ -293,6 +291,14 @@ class VistaInserisciProdotto(QMainWindow):
 
         if not giacenza.isdigit():
             self.msg_box.setText("La giacenza deve essere un numero")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+            return
+
+        try:
+            prezzo_float = float(prezzo)
+        except ValueError:
+            self.msg_box.setText("Il prezzo deve essere un numero decimale")
             self.msg_box.setIcon(QMessageBox.Information)
             self.msg_box.exec_()
             return

@@ -1,9 +1,11 @@
-
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
     QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
+
+from Controls.gestore_vendite import GestoreVendite
+
 
 class CustomTitleBar(QWidget):
     def __init__(self, parent=None):
@@ -120,7 +122,7 @@ class VistaStampaStoricoCliente(QMainWindow):
         main_layout.addWidget(self.title_bar)
 
         # Titolo della finestra
-        self.title_label = QLabel(f"Storico acquisti cliente ID : {IdCliente} ", self)
+        self.title_label = QLabel(f"Storico acquisti cliente ID : {IdCliente} 📝👚 ", self)
         self.title_label.setFont(QFont("Times New Roman", 20, QFont.Bold))
         self.title_label.setStyleSheet("color: White;")
         self.title_label.setAlignment(Qt.AlignCenter)
@@ -186,41 +188,43 @@ class VistaStampaStoricoCliente(QMainWindow):
         self.timer.start(1000)  # Aggiorna ogni 1000 millisecondi (1 secondo)
         self.update_time()
 
-
-
     def load_data(self):
-       # DA MODIFICARE PERCHE BISGONA PRENDERE GLI ACQUISTI ECC...
-        from Attivita.cliente import Cliente
-        clientiDB = Cliente()
-        clienti = clientiDB.stampa_storico_cliente(self.IdCliente)
+        # Import necessario per gestire gli acquisti
+        from Controls.gestore_vendite import GestoreVendite
+
+        # Recupera gli acquisti del cliente
+        clienti = GestoreVendite().storico_acquisti_cliente(self.IdCliente)
 
         # Assicurati che i dati siano stati recuperati
-        if clienti is None:
+        if not clienti:
+            # Se la lista è vuota, imposta le colonne ma non mostra alcun dato
             self.table_widget.setRowCount(0)
-            self.table_widget.setColumnCount(10)  # Imposta il numero corretto di colonne
+            self.table_widget.setColumnCount(8)  # Numero corretto di colonne
             self.table_widget.setHorizontalHeaderLabels(
-                ["ID PRODOTTO", "MARCA", "PREZZO", "DESCRIZIONE", "TIPO PRODOTTO", "DATA ACQUISTO", "QUANTITA", "METODO PAGAMENTO"])
+                ["ID PRODOTTO", "MARCA", "PREZZO", "DESCRIZIONE", "TIPO PRODOTTO", "DATA ACQUISTO", "QUANTITA",
+                 "METODO PAGAMENTO"]
+            )
             return
 
-        # Imposta il numero di righe e colonne
+        # Imposta il numero di righe e colonne basato sul numero di acquisti
         self.table_widget.setRowCount(len(clienti))
-        self.table_widget.setColumnCount(8)  # Imposta il numero corretto di colonne
+        self.table_widget.setColumnCount(8)  # Numero corretto di colonne
 
         # Imposta le intestazioni delle colonne
         self.table_widget.setHorizontalHeaderLabels(
-            ["ID PRODOTTO", "MARCA", "PREZZO", "DESCRIZIONE", "TIPO PRODOTTO", "DATA ACQUISTO", "QUANTITA", "METODO PAGAMENTO"])
+            ["ID PRODOTTO", "MARCA", "PREZZO", "DESCRIZIONE", "TIPO PRODOTTO", "DATA ACQUISTO", "QUANTITA",
+             "METODO PAGAMENTO"]
+        )
 
-
-        # Popola la tabella con i dati
+        # Popola la tabella con i dati degli acquisti
         for row_idx, row_data in enumerate(clienti):
             for col_idx, col_data in enumerate(row_data):
                 if col_idx < 8:  # Assicurati di non superare il numero di colonne
-                    self.table_widget.setItem(row_idx, col_idx, QTableWidgetItem(str(col_data)))
                     item = QTableWidgetItem(str(col_data))
                     item.setBackground(Qt.darkCyan)
                     self.table_widget.setItem(row_idx, col_idx, item)
 
-
+        # Adatta le colonne al contenuto
         self.table_widget.resizeColumnsToContents()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 

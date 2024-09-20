@@ -1,5 +1,6 @@
 import random
 import sys
+from datetime import datetime
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
     QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QLineEdit, QGroupBox, QRadioButton, QMessageBox
@@ -345,18 +346,19 @@ class VistaVenditaProdotto(QMainWindow):
             self.id_entry.setPlaceholderText("Inserisci un ID e una quantità validi")
 
     def check_stock_and_load_data(self, id_prodotto_cercato, quantity):
-        from Attivita.prodotto import Prodotto
-        prodottoDB = Prodotto()
-        prodotti = prodottoDB.Ottieni_info_prodotto(id_prodotto_cercato)
+        from Controls.gestore_prodotti import GestoreProdotti
+        prodotto_PK = GestoreProdotti()
+        prodotti = prodotto_PK.ritorna_prodotto_ID(id_prodotto_cercato)
+
 
         if not prodotti:
             # Se non ci sono risultati, non fare nulla
             QMessageBox.warning(self, "Prodotto non trovato", "Il prodotto con l'ID inserito non esiste.")
             return
 
-        giacenza = prodotti[0][7]  # Supponendo che la giacenza sia nella colonna 7 dell'array `prodotti`
+        giacenza = prodotti.get_giacenza()
 
-        if quantity > giacenza:
+        if quantity > int(giacenza):
             # Mostra un messaggio di errore se la quantità richiesta è maggiore della giacenza
             QMessageBox.warning(self, "Quantità non disponibile",
                                 f"La quantità richiesta ({quantity}) è maggiore della giacenza disponibile ({giacenza}).")
@@ -365,14 +367,31 @@ class VistaVenditaProdotto(QMainWindow):
         self.load_data(id_prodotto_cercato, quantity)
 
     def load_data(self, id_prodotto_cercato, quantity):
-        # Connessione al database SQLite
-        from Attivita.prodotto import Prodotto
-        prodottoDB = Prodotto()
-        prodotti = prodottoDB.Ottieni_info_prodotto(id_prodotto_cercato)
+        # Ricavo il prodotto tramite ID
+        from Controls.gestore_prodotti import GestoreProdotti
+        prodotto_PK = GestoreProdotti()
+        prodotto = prodotto_PK.ritorna_prodotto_ID(id_prodotto_cercato)
 
-        if not prodotti:
+        if not prodotto:
             # Se non ci sono risultati, non fare nulla
             return
+
+        # Ricava la scatola associata al prodotto
+        scatola = prodotto.get_scatola()
+
+        prodotto_tuple = (
+            prodotto.get_id_prodotto(),  # ID
+            prodotto.get_marca(),  # Marca
+            prodotto.get_colore(),  # Colore
+            prodotto.get_prezzo(),  # Prezzo
+            prodotto.get_taglia(),  # Taglia
+            prodotto.get_descrizione(),  # Descrizione
+            prodotto.get_tipo_prodotto(),  # Tipo prodotto
+            prodotto.get_giacenza(),  # Giacenza
+            scatola.get_IDscatola(),  # ID Scatola
+            scatola.get_descrizione_scatola(),  # Descrizione scatola
+            scatola.get_magazzino_scatola()  # ID Magazzino
+        )
 
         # Se la tabella è vuota, imposta le intestazioni delle colonne
         if self.table_widget.rowCount() == 0:
@@ -382,46 +401,46 @@ class VistaVenditaProdotto(QMainWindow):
                  "GIACENZA", "IDSCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO", "QUANTITÀ",
                  "AZIONE\nRIMUOVI PRODOTTO"])
 
-        # Aggiungi nuove righe alla tabella per i prodotti cercati
-        for row_data in prodotti:
-            product_id = row_data[0]
-            # Se il prodotto è già presente nella tabella, aggiorna la quantità
-            if product_id in self.product_row_map:
-                row = self.product_row_map[product_id]
-                current_quantity = int(
-                    self.table_widget.item(row, 11).text())  # Supponiamo che la quantità sia nella colonna 11
-                quantity += current_quantity
-                self.table_widget.item(row, 11).setText(str(quantity))  # Aggiorna la quantità
-                # Aggiorna il costo totale
-                self.total_cost += float(row_data[3]) * quantity
-                self.update_total_cost()
-                return
+        product_id = prodotto_tuple[0]
 
-            # Aggiungi nuovo prodotto alla tabella
-            row_idx = self.table_widget.rowCount()
-            self.table_widget.insertRow(row_idx)
+        # Se il prodotto è già presente nella tabella, aggiorna la quantità
+        if product_id in self.product_row_map:
+            row = self.product_row_map[product_id]
+            current_quantity = int(
+                self.table_widget.item(row, 11).text())  # Supponiamo che la quantità sia nella colonna 11
+            quantity += current_quantity
+            self.table_widget.item(row, 11).setText(str(quantity))  # Aggiorna la quantità
+            # Aggiorna il costo totale
+            self.total_cost += float(prodotto_tuple[3]) * (
+                        quantity - current_quantity)  # Solo l'aggiunta della nuova quantità
+            self.update_total_cost()
+            return
 
-            for col_idx, col_data in enumerate(row_data):
-                if col_idx < 12:  # Assicurati di non superare il numero di colonne
-                    item = QTableWidgetItem(str(col_data))
-                    item.setBackground(Qt.darkCyan)
-                    self.table_widget.setItem(row_idx, col_idx, item)
+        # Aggiungi nuovo prodotto alla tabella
+        row_idx = self.table_widget.rowCount()
+        self.table_widget.insertRow(row_idx)
 
-            quantity_item = QTableWidgetItem(str(quantity))
-            quantity_item.setBackground(Qt.darkCyan)
-            self.table_widget.setItem(row_idx, 11, quantity_item)
+        for col_idx, col_data in enumerate(prodotto_tuple):
+            if col_idx < 12:  # Assicurati di non superare il numero di colonne
+                item = QTableWidgetItem(str(col_data))
+                item.setBackground(Qt.darkCyan)
+                self.table_widget.setItem(row_idx, col_idx, item)
 
-            action_button = QPushButton("ELIMINA PRODOTTO")
-            action_button.setStyleSheet("background-color: red; color: white; font-weight: bold;")
-            action_button.clicked.connect(partial(self.perform_action1, product_id, row_idx, quantity))
-            self.table_widget.setCellWidget(row_idx, 12, action_button)
+        quantity_item = QTableWidgetItem(str(quantity))
+        quantity_item.setBackground(Qt.darkCyan)
+        self.table_widget.setItem(row_idx, 11, quantity_item)
 
-            # Mappa l'ID prodotto all'indice di riga e prezzo
-            self.product_row_map[product_id] = row_idx
-            self.product_price_map[product_id] = float(row_data[3])  # Prezzo del prodotto
+        action_button = QPushButton("ELIMINA PRODOTTO")
+        action_button.setStyleSheet("background-color: red; color: white; font-weight: bold;")
+        action_button.clicked.connect(partial(self.perform_action1, product_id, row_idx, quantity))
+        self.table_widget.setCellWidget(row_idx, 12, action_button)
 
-            # Aggiorna la spesa totale
-            self.total_cost += float(row_data[3]) * quantity
+        # Mappa l'ID prodotto all'indice di riga e prezzo
+        self.product_row_map[product_id] = row_idx
+        self.product_price_map[product_id] = float(prodotto_tuple[3])  # Prezzo del prodotto
+
+        # Aggiorna la spesa totale
+        self.total_cost += float(prodotto_tuple[3]) * quantity
 
         # Aggiorna la visualizzazione della spesa totale
         self.update_total_cost()
@@ -436,6 +455,7 @@ class VistaVenditaProdotto(QMainWindow):
     def perform_action1(self, product_id, row_idx, quantity):
         # Rimuovi la riga dalla tabella
         self.table_widget.removeRow(row_idx)
+
         # Rimuovi la mappatura dell'ID prodotto
         if product_id in self.product_row_map:
             del self.product_row_map[product_id]
@@ -460,62 +480,72 @@ class VistaVenditaProdotto(QMainWindow):
             QMessageBox.warning(self, "Metodo di pagamento obbligatorio", "Seleziona un metodo di pagamento.")
             return
 
+        # Controllo che il numero di telefono sia composto solo da cifre
+        if not telefono_cliente.isdigit():
+            QMessageBox.warning(self, "Errore", "Il numero di telefono deve contenere solo cifre.")
+            return
+
+
         from Attivita.acquisto import Acquisto
         from Attivita.cliente import Cliente
-        cliente = Cliente()
+        from Controls.gestore_vendite import GestoreVendite
+        from Controls.gestore_clienti import GestoreClienti
+        from Controls.gestore_prodotti import GestoreProdotti  # Importa il gestore dei prodotti
 
-        saldo_wallet = cliente.ritorna_wallet(telefono_cliente)
+        cliente = GestoreClienti().cerca_per_telefono(telefono_cliente)
+
+
+        if not cliente :
+            #QMessageBox.warning(self, "Cliente non trovato", "Nessun cliente trovato con il numero di telefono fornito.")
+            return
+
+        saldo_wallet = cliente[0].get_saldo_wallet()
         if saldo_wallet is None:
             return
 
         if saldo_wallet < self.total_cost and metodo_pagamento == "SALDO WALLET":
             QMessageBox.warning(self, "Errore",
-                                f"Saldo insufficiente. Il costo totale dell'acquisto è €{self.total_cost:.2f}, ma il saldo del wallet è solo €{saldo_wallet:.2f}.")
+                                f"Saldo insufficiente. Il costo totale dell'acquisto è €{self.total_cost:.2f}, "
+                                f"ma il saldo del wallet è solo €{saldo_wallet:.2f}.")
             return
 
-        Acquisto = Acquisto()
+
         codice = random.randint(10000000, 99999999)
-        products = []
+        prodotti = []
 
         # Raccolta delle informazioni dai widget della tabella
         for row in range(self.table_widget.rowCount()):
-            product_info = {
-                'id_prodotto': self.table_widget.item(row, 0).text(),
-                'marca': self.table_widget.item(row, 1).text(),
-                'colore': self.table_widget.item(row, 2).text(),
-                'prezzo': self.table_widget.item(row, 3).text(),
-                'taglia': self.table_widget.item(row, 4).text(),
-                'descrizione_prodotto': self.table_widget.item(row, 5).text(),
-                'tipo_prodotto': self.table_widget.item(row, 6).text(),
-                'giacenza': self.table_widget.item(row, 7).text(),
-                'id_scatola': self.table_widget.item(row, 8).text(),
-                'descrizione_scatola': self.table_widget.item(row, 9).text(),
-                'id_magazzino': self.table_widget.item(row, 10).text(),
-                'quantita': self.table_widget.item(row, 11).text(),
-            }
-            products.append(product_info)
-
-        # Inserimento delle informazioni di acquisto per ogni prodotto
-        for product in products:
-            id_prodotto = product['id_prodotto']
+            id_prodotto = self.table_widget.item(row, 0).text()
             try:
-                quantita = int(product['quantita'])  # Converti quantita in intero
+                quantita = int(self.table_widget.item(row, 11).text())  # Quantità dalla tabella
             except ValueError:
                 QMessageBox.warning(self, "Errore",
-                                    f"La quantità '{product['quantita']}' non è valida. Inserisci un numero intero.")
+                                    f"La quantità '{self.table_widget.item(row, 11).text()}' non è valida. Inserisci un numero intero.")
                 return
 
-            Acquisto.inserisci_acquisto(
-                telefono_cliente,  # Numero di telefono del cliente
-                id_prodotto,  # ID del prodotto
-                quantita,  # Quantità acquistata
-                metodo_pagamento,  # Metodo di pagamento
-                str(codice)  # Codice generato per l'acquisto
-            )
+            prodotto = GestoreProdotti().ritorna_prodotto_ID(id_prodotto)  # Recupera il prodotto
 
-        Acquisto.CreaScontrinoAcquisto(products, self.prezzoSconto, str(codice))
+            if prodotto:
+                # Aggiungi il prodotto all'elenco
+                prodotto.set_quantita(quantita)
+                prodotti.append(prodotto)
+            else:
+                QMessageBox.warning(self, "Errore", f"Prodotto con ID '{id_prodotto}' non trovato.")
+                return
 
+        if not prodotti:
+            QMessageBox.warning(self, "Errore", f"Inserire dei prodotti da acquistare.")
+            return
 
+        # Ora che abbiamo tutti i prodotti, creiamo l'oggetto Acquisto
+        id = GestoreVendite().ritorna_ultimo_ID_acquisto() + 1
+        acquisto = Acquisto(id,cliente[0],prodotti,datetime.now().strftime("%Y-%m-%d %H:%M:%S"),metodo_pagamento,codice)
+
+        #Salvataggio acquisti nel gestore vendite
+        GestoreVendite().aggiungi_acquisto(acquisto) #Memorizza l'acquisto nel file
+        prezzo_scontato_formattato = f"€{self.prezzoSconto:.2f}"
+        GestoreVendite().CreaScontrinoAcquisto(prodotti,prezzo_scontato_formattato,acquisto.get_codice_vendita()) #crea lo scontrino fiscale
+        GestoreProdotti().aggiorna_prodotti(prodotti)
     def get_selected_payment_method(self):
         if self.cash_radio.isChecked():
             return "CONTANTI"
@@ -538,6 +568,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-#ULTIMA MODIFICA
-

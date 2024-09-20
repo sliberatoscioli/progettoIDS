@@ -271,6 +271,19 @@ class InserisciDipendente(QMainWindow):
         telefono = self.telefono_entry.text()
         data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")  # Formatta la data come '2003-01-01'
         dipendente = Dipendente(id,nome,cognome,data_di_nascita,telefono,email,residenza)
+
+        if not all([nome, cognome, residenza, email, telefono, data_di_nascita]):
+            self.msg_box.setText("Errore: tutti i campi devono essere compilati.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+            return
+
+        if not telefono.isdigit():
+            self.msg_box.setText("Errore: il numero di telefono deve essere composto solo da cifre.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+            return
+
         gestore_dipendente = GestoreDipendenti()
         gestore_dipendente.aggiungi_dipendenti(dipendente)
 

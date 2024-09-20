@@ -201,10 +201,10 @@ class VistaResoProdotto(QMainWindow):
             self.codiceVendita_entry.setPlaceholderText("Inserisci un Codice Vendita valido")
 
     def load_data(self, codice_vendita):  # recupera info e stampa in una tabella
-        # Connessione al database SQLite
-        from Attivita.acquisto import Acquisto
-        info_acquisto = Acquisto()
-        prodotti = info_acquisto.ricerca_acquisto(codice_vendita)
+        #Si restituiscono le informazioni relative a quella vendita
+        from Controls.gestore_vendite import GestoreVendite
+        info_acquisto = GestoreVendite()
+        prodotti = info_acquisto.ricerca_acquisti(codice_vendita)
 
         # Assicurati che i dati siano stati recuperati
         if not prodotti:
@@ -240,18 +240,15 @@ class VistaResoProdotto(QMainWindow):
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
     def perform_action1(self, row_data):  # reso prodotto (aumenta giacenza e carica wallet cliente)
-        from Attivita.acquisto import Acquisto
-        reso = Acquisto()
+        from Controls.gestore_vendite import GestoreVendite
 
         # Estrai i dati dalla riga
-        id_acquisto = row_data[0]
         id_cliente = row_data[1]
         codice_vendita = row_data[6]
         id_prodotto = row_data[3]
         quantita = row_data[4]
         prezzo = row_data[9]
-
-        reso.reso_prodotto(id_prodotto,codice_vendita,quantita,prezzo,id_cliente)
+        GestoreVendite().reso_prodotto(id_prodotto,codice_vendita,quantita,float(prezzo),id_cliente)
 
         # Trova l'indice della riga da rimuovere
         row_idx = self.table_widget.currentRow()

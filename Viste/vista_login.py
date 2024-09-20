@@ -163,6 +163,14 @@ class LoginForm(QMainWindow):
         # Aggiunta del layout dei pulsanti al layout principale
         main_layout.addLayout(button_layout)
 
+        # Pulsante "Reimposta Credenziali" sotto i pulsanti Enter e Reset
+        nuovo_cliente_button = QPushButton("REIMPOSTA CREDENZIALI", self)
+        nuovo_cliente_button.setFont(button_font)
+        nuovo_cliente_button.setStyleSheet("color: white; background-color: green;")
+        nuovo_cliente_button.setMinimumHeight(50)
+        #nuovo_cliente_button.clicked.connect(self.open_nuovo_cliente)  # Collega il pulsante al metodo
+        main_layout.addWidget(nuovo_cliente_button)
+
         # Spazio sotto i widget principali
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)

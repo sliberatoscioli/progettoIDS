@@ -168,7 +168,7 @@ class GestoreDipendenti:
         elements = []
 
         # Preparazione dei dati per la tabella
-        data = [["ID", "Nome", "Cognome", "Data Nascita", "Telefono", "Email", "Residenza", "Numero Clienti Inseriti"]]
+        data = [["ID", "Nome", "Cognome", "Data \n Nascita", "Telefono", "Email", "Residenza", "Numero Clienti \n Inseriti"]]
 
         for dipendente in dipendenti:
             dipendente_id = dipendente.get_id()
@@ -220,6 +220,3 @@ class GestoreDipendenti:
             self.msg_box.setText(f"Impossibile aprire il PDF: {e}")
             self.msg_box.setIcon(QMessageBox.Critical)
             self.msg_box.exec_()
-
-
-

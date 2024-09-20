@@ -43,3 +43,8 @@ class Cliente:
 
     def get_saldo_wallet(self):
         return self.saldo_wallet
+
+    def set_saldo_wallet(self, ricarica):
+        if ricarica < 0:
+            raise ValueError("L'importo della ricarica deve essere positivo.")
+        self.saldo_wallet += ricarica

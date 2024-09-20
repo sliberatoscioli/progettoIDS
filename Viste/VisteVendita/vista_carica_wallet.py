@@ -272,7 +272,8 @@ class VistaCaricaWallet(QMainWindow):
         QMessageBox.information(self, title, message)
 
     def load_data(self, telefonoCliente_cercato, importo, metodo_pagamento):
-        carica_wallet = acquistare().carica_wallet(telefonoCliente_cercato, importo, metodo_pagamento)
+        from Controls.gestore_clienti import GestoreClienti
+        GestoreClienti().carica_wallet(telefonoCliente_cercato,importo,metodo_pagamento)
 
 # Funzione principale per avviare l'applicazione
 def main():

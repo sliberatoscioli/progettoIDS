@@ -10,7 +10,7 @@ from PyQt5.QtCore import QTimer, QTime, Qt
 from Viste.VisteClienti.vista_cliente import VistaCliente
 from Viste.VisteDipendenti.vista_dipendente import vistaDipendente
 from Viste.VisteProdotti.vista_prodotto import VistaProdotto
-#from Viste.VistaVendite.Vistavendita import VistaVendita
+from Viste.VisteVendita.vista_vendita import VistaVendita
 
 
 class CustomTitleBar(QWidget):

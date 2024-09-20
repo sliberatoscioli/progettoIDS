@@ -45,3 +45,12 @@ class Prodotto:
 
     def set_giacenza(self):
         self.giacenza = 25
+
+    def set_quantita(self, quantita):
+        if quantita > 0:
+            self.quantita = quantita
+        else:
+            raise ValueError("La quantità deve essere maggiore di zero")
+
+    def aggiorna_giacenza(self,quantita):
+        self.giacenza = quantita

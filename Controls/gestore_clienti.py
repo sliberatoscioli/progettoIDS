@@ -1,6 +1,7 @@
 import os
 import pickle
 from PyQt5.QtWidgets import QMessageBox
+from Controls.gestore_vendite import GestoreVendite
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.pagesizes import letter
@@ -257,4 +258,47 @@ class GestoreClienti:
 
         return risultati
 
+    def carica_wallet(self, telefono, ricarica, metodo_pagamento):
+        if ricarica <= 0:
+            self.msg_box.setText("L'importo deve essere positivo.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+            return
 
+        # Carica i clienti
+        lista_clienti = self.ritorna_lista_clienti()
+
+        cliente_trovato = None
+        for cliente in lista_clienti:
+            if cliente.get_telefono_cliente() == telefono:
+                cliente_trovato = cliente
+                break
+
+        if cliente_trovato is None:
+            self.msg_box.setText(f"Nessun cliente trovato con numero di telefono {telefono}.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+            return
+
+        # Aggiungi la ricarica al saldo attuale
+        nuovo_saldo = cliente_trovato.get_saldo_wallet() + ricarica
+        cliente_trovato.set_saldo_wallet(nuovo_saldo)
+
+        try:
+            # Salva la lista aggiornata nel file pickle
+            with open(self.file_path, 'wb') as file:
+                pickle.dump(lista_clienti, file)
+
+            # Messaggio di conferma
+            self.msg_box.setText(f"Saldo wallet cliente con telefono {telefono} aggiornato con successo. "
+                                 f"Nuovo saldo: € {nuovo_saldo:.2f}.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+
+        except pickle.PickleError as e:
+            self.msg_box.setText(f"Errore durante il salvataggio del saldo wallet: {e}")
+            self.msg_box.setIcon(QMessageBox.Critical)
+            self.msg_box.exec_()
+
+        # richiamare metodo crea scontrino saldo_wallet
+        Scontrino = GestoreVendite().creaScontrinoWallet(telefono,ricarica,metodo_pagamento)
