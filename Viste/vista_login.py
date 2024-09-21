@@ -164,12 +164,12 @@ class LoginForm(QMainWindow):
         main_layout.addLayout(button_layout)
 
         # Pulsante "Reimposta Credenziali" sotto i pulsanti Enter e Reset
-        nuovo_cliente_button = QPushButton("REIMPOSTA CREDENZIALI", self)
-        nuovo_cliente_button.setFont(button_font)
-        nuovo_cliente_button.setStyleSheet("color: white; background-color: green;")
-        nuovo_cliente_button.setMinimumHeight(50)
-        #nuovo_cliente_button.clicked.connect(self.open_nuovo_cliente)  # Collega il pulsante al metodo
-        main_layout.addWidget(nuovo_cliente_button)
+        nuove_credenziali_button = QPushButton("REIMPOSTA CREDENZIALI", self)
+        nuove_credenziali_button.setFont(button_font)
+        nuove_credenziali_button.setStyleSheet("color: white; background-color: green;")
+        nuove_credenziali_button.setMinimumHeight(50)
+        nuove_credenziali_button.clicked.connect(self.open_new_credenziali)  # Collega il pulsante al metodo
+        main_layout.addWidget(nuove_credenziali_button)
 
         # Spazio sotto i widget principali
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
@@ -198,6 +198,12 @@ class LoginForm(QMainWindow):
     def reset_clicked(self):
         self.username_entry.clear()
         self.password_entry.clear()
+
+    def open_new_credenziali(self):
+        from Viste.vista_credenziali import VistaCredenziali
+        self.new_credenziali_view = VistaCredenziali()
+        self.new_credenziali_view.resize(500, 600)  # Imposta la dimensione della finestra ridotta
+        self.new_credenziali_view.show()
 
     def show_message(self, title, message):
         msg_box = QMessageBox(self)
