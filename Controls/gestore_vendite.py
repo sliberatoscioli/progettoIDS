@@ -4,6 +4,15 @@ from datetime import datetime
 
 from PyQt5.QtWidgets import QMessageBox
 from reportlab.pdfgen import canvas
+from datetime import datetime
+from PyQt5.QtWidgets import QMessageBox
+from reportlab.lib.pagesizes import A4
+from reportlab.pdfgen import canvas
+from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from reportlab.platypus import Table, TableStyle, Paragraph
+from reportlab.lib.units import mm
+from reportlab.lib import colors
+import os
 
 
 class GestoreVendite:
@@ -337,7 +346,8 @@ class GestoreVendite:
 
         if cliente_trovato:
             # Calcola il credito da restituire
-            prezzo_wallet = quantita * prezzo
+            wallet_cliente = cliente_trovato.get_saldo_wallet()
+            prezzo_wallet = wallet_cliente+quantita * prezzo
             try:
                 # Aggiorna il saldo del wallet del cliente
                 cliente_trovato.set_saldo_wallet(prezzo_wallet)
@@ -384,5 +394,218 @@ class GestoreVendite:
 
         # Notifica l'utente che l'operazione è avvenuta con successo
         self.msg_box.setText("Reso del prodotto avvenuto con successo.")
+        self.msg_box.setIcon(QMessageBox.Information)
+        self.msg_box.exec_()
+
+    # Metodo per il riepilogo giornalieri
+    def riepilogo_giornaliero(self):
+        lista_acquisti = self.ritorna_lista_acquisti()  # Prelevo tutti gli acquisti nel file
+        oggi = datetime.now().date()  # Ottieni la data di oggi (solo data)
+
+        try:
+            with open('Dati/Clienti.pkl', 'rb') as file:
+                lista_clienti = pickle.load(file)
+        except (FileNotFoundError, pickle.PickleError):
+            lista_clienti = []
+
+        totale_carta_di_credito = 0
+        totale_contanti = 0
+        totale_saldo_wallet = sum(cliente.get_saldo_wallet() for cliente in lista_clienti) if lista_clienti else 0
+        info = []  # informazioni sul cliente
+        quantita_per_tipo = {}  # Dizionario per raccogliere le quantità per tipo di prodotto
+
+        for acquisto in lista_acquisti:
+            try:
+                # Recupera la data di acquisto come stringa
+                data_acquisto_completa = acquisto.get_data_acquisto()
+                # Conversione della stringa in un oggetto datetime
+                data_acquisto_completa = datetime.strptime(data_acquisto_completa, "%Y-%m-%d %H:%M:%S")
+                # Ottieni solo giorno, mese e anno
+                data_solo_giorno_mese_anno = data_acquisto_completa.date()
+
+                # Confronta solo le date
+                if data_solo_giorno_mese_anno == oggi:
+                    for prodotto in acquisto.get_prodotti():
+                        quantita = prodotto.get_quantita()
+                        prezzo = float(prodotto.get_prezzo())  # Assicurati che il prezzo sia un float
+                        tot = quantita * prezzo
+
+                        cliente = acquisto.get_cliente()
+                        info.append(
+                            (cliente.get_nome_cliente(), cliente.get_cognome_cliente(), cliente.get_email_cliente(),
+                             cliente.get_telefono_cliente(), cliente.get_saldo_wallet(), prodotto.get_marca(),
+                             prodotto.get_taglia(), prodotto.get_colore(), prodotto.get_prezzo(),
+                             prodotto.get_tipo_prodotto(), prodotto.get_descrizione(),
+                             acquisto.get_data_acquisto(), quantita, acquisto.get_metodo_pagamento()))
+
+                        # Aggiornamento totale per il metodo di pagamento
+                        if acquisto.get_metodo_pagamento() == 'CARTA DI CREDITO':
+                            totale_carta_di_credito += tot
+                        elif acquisto.get_metodo_pagamento() == 'CONTANTI':
+                            totale_contanti += tot
+
+                        # Aggiornamento della quantità per tipo di prodotto
+                        tipo_prodotto = prodotto.get_tipo_prodotto()
+                        if tipo_prodotto in quantita_per_tipo:
+                            quantita_per_tipo[tipo_prodotto] += quantita
+                        else:
+                            quantita_per_tipo[tipo_prodotto] = quantita
+
+            except Exception as e:
+                print("Errore durante il processamento dell'acquisto:", e)
+
+        # Crea una lista delle quantità totali per tipo di prodotto
+        quantita_totale_per_tipo = [(tipo, quantita) for tipo, quantita in quantita_per_tipo.items()]
+        self.crea_pdf_riassunto_giornaliero(info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo)
+        return info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo
+
+    from datetime import datetime
+    import os
+    from reportlab.lib import colors
+    from reportlab.lib.pagesizes import A4
+    from reportlab.lib.units import mm
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+    from reportlab.platypus import Spacer
+    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+    from reportlab.pdfgen import canvas
+
+    def crea_pdf_riassunto_giornaliero(self, dati, totale_contanti, totale_carta_di_credito, totale_saldo_wallet,
+                                       vendite_per_tipo):
+        # Percorso alla cartella sul desktop
+        desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
+        cartella_riepiloghi = os.path.join(desktop_path, 'Riepiloghi_giornalieri')
+
+        # Crea la cartella se non esiste
+        if not os.path.exists(cartella_riepiloghi):
+            os.makedirs(cartella_riepiloghi)
+
+        # Ricava la data di acquisto dalla data attuale
+        data_acquisto = datetime.now().strftime('%Y-%m-%d')
+
+        # Percorso completo per il PDF
+        pdf_path = os.path.join(cartella_riepiloghi, f'Riepilogo_{data_acquisto}.pdf')
+
+        # Creazione del PDF
+        c = canvas.Canvas(pdf_path, pagesize=A4)
+        c.setTitle(f"Riepilogo giornaliero del {data_acquisto}")
+
+        width, height = A4
+        margin = 20 * mm
+        styles = getSampleStyleSheet()
+        title_style = ParagraphStyle(name='Title', fontName='Times-Roman', fontSize=16, spaceAfter=12, alignment=1)
+        heading_style = ParagraphStyle(name='Heading', fontName='Times-Bold', fontSize=12, spaceAfter=10, alignment=1)
+
+        # Titolo
+        title = Paragraph(f"Riepilogo del giorno {data_acquisto}", title_style)
+        title.wrapOn(c, width - 2 * margin, height - 2 * margin)
+        title.drawOn(c, margin, height - margin)
+
+        # Linea di "=" dopo il titolo
+        c.setFont("Times-Roman", 12)
+        num_equals = int((width - 2 * margin) // c.stringWidth("=", "Times-Roman", 12))
+        c.drawString(margin, height - 2.5 * margin, "=" * num_equals)
+
+        # Sezione: Informazioni sulle vendite
+        heading = Paragraph("Informazioni vendite", heading_style)
+        heading.wrapOn(c, width - 2 * margin, height - 2 * margin)
+        heading.drawOn(c, margin, height - 3 * margin)
+
+        # Prepara i dati per la tabella delle vendite
+        table_data = [["Cliente", "Prodotto", "Quantità", "Prezzo", "Metodo Pagamento"]]
+        for info in dati:
+            cliente = f"{info[0]} {info[1]}"
+            prodotto = f"{info[5]} {info[9]} ({info[6]})"
+            quantita = info[12]
+            prezzo = f"{float(info[8]):.2f} €"
+            metodo_pagamento = info[13]
+            table_data.append([cliente, prodotto, quantita, prezzo, metodo_pagamento])
+
+        # Crea la tabella delle informazioni (bianco e nero)
+        table = Table(table_data)
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Times-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
+        ]))
+
+        # Riduci la distanza tra tabelle
+        table.wrapOn(c, width - 2 * margin, height - 5 * margin)
+        table.drawOn(c, margin, height - 5 * margin - len(table_data) * 16)
+
+        # Calcola l'altezza corrente per la posizione successiva
+        current_height = height - 5 * margin - len(table_data) * 16
+
+        # Sezione: Totale incassi
+        heading = Paragraph("Totale Incassi", heading_style)
+        heading.wrapOn(c, width - 2 * margin, height - 2 * margin)
+        heading.drawOn(c, margin, current_height - 1.5 * margin)
+        totale_complessivo = totale_contanti + totale_saldo_wallet + totale_carta_di_credito
+        table_data_incassi = [
+            ["Metodo di Pagamento", "Totale (€)"],
+            ["Contanti", f"{totale_contanti:.2f} €"],
+            ["Carta di Credito", f"{totale_carta_di_credito:.2f} €"],
+            ["Saldo Wallet", f"{totale_saldo_wallet:.2f} €"],
+            ["TOTALE COMPLESSIVO", f"{totale_complessivo:.2f} €"]
+        ]
+
+        # Crea la tabella dei totali (bianco e nero)
+        table_incassi = Table(table_data_incassi)
+        table_incassi.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Times-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
+        ]))
+
+        # Draw the total incassi table
+        current_height -= 2 * margin + len(table_data_incassi) * 16
+        table_incassi.wrapOn(c, width - 2 * margin, height - 2 * margin)
+        table_incassi.drawOn(c, margin, current_height)
+
+        # Sezione: Vendite per tipo di prodotto
+        heading = Paragraph("Vendite per Tipo di Prodotto", heading_style)
+        heading.wrapOn(c, width - 2 * margin, height - 2 * margin)
+        heading.drawOn(c, margin, current_height - 1.5 * margin)
+
+        table_data_vendite = [["Tipo di Prodotto", "Quantità"]]
+        for vendita in vendite_per_tipo:
+            table_data_vendite.append([vendita[0], vendita[1]])
+
+        # Crea la tabella delle vendite per tipo (bianco e nero)
+        table_vendite = Table(table_data_vendite)
+        table_vendite.setStyle(TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.black),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+            ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Times-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 8),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('TEXTCOLOR', (0, 1), (-1, -1), colors.black),
+            ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
+        ]))
+
+        # Draw the sales per type table
+        current_height -= 2 * margin + len(table_data_vendite) * 16
+        table_vendite.wrapOn(c, width - 2 * margin, height - 2 * margin)
+        table_vendite.drawOn(c, margin, current_height)
+
+        # Aggiungi una linea di "=" alla fine del PDF
+        current_height -= 2 * margin
+        c.setFont("Times-Roman", 12)
+        c.drawString(margin, current_height, "=" * num_equals)
+
+        # Finalizza il PDF
+        c.showPage()
+        c.save()
+        self.msg_box.setText(f"Riepilogo giornaliero in PDF generato con successo: {pdf_path}")
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()

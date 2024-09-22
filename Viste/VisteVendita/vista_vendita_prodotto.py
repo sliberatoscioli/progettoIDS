@@ -546,6 +546,12 @@ class VistaVenditaProdotto(QMainWindow):
         prezzo_scontato_formattato = f"€{self.prezzoSconto:.2f}"
         GestoreVendite().CreaScontrinoAcquisto(prodotti,prezzo_scontato_formattato,acquisto.get_codice_vendita()) #crea lo scontrino fiscale
         GestoreProdotti().aggiorna_prodotti(prodotti)
+        if metodo_pagamento == "SALDO WALLET":
+            if self.prezzoSconto != 0:
+                GestoreClienti().carica_wallet(telefono_cliente, -self.prezzoSconto, metodo_pagamento)
+            else:
+                GestoreClienti().carica_wallet(telefono_cliente, -self.total_cost, metodo_pagamento)
+
     def get_selected_payment_method(self):
         if self.cash_radio.isChecked():
             return "CONTANTI"
@@ -568,3 +574,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+#ULTIMA MODIFICA
+

@@ -259,12 +259,6 @@ class GestoreClienti:
         return risultati
 
     def carica_wallet(self, telefono, ricarica, metodo_pagamento):
-        if ricarica <= 0:
-            self.msg_box.setText("L'importo deve essere positivo.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
-            return
-
         # Carica i clienti
         lista_clienti = self.ritorna_lista_clienti()
 
