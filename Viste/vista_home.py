@@ -150,7 +150,7 @@ class VistaHome(QWidget):
             self.get_colored_button("Gestore Vendite 🛒", "#6A00FF", "#ffffff", self.go_vendita), 1, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Backup 💾", "#FF8C00", "#ffffff", self.clone_database), 2, 0, 1 ,2
+            self.get_colored_button("Backup 💾", "#FF8C00", "#ffffff", self.go_backup), 2, 0, 1 ,2
         )
 
         main_layout.addLayout(grid_layout)
@@ -198,6 +198,11 @@ class VistaHome(QWidget):
         self.vendita_window.showFullScreen()
         self.close()
 
+    def go_backup(self):
+        from Controls.gestore_sistema import GestoreBackup
+        backup=GestoreBackup()
+        backup.backup_files()
+
     def update_clock(self):
         current_time = QTime.currentTime().toString('HH:mm:ss')
         self.clock_label.setText(current_time)
@@ -205,45 +210,6 @@ class VistaHome(QWidget):
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
-    def clone_database(self):
-        # Clona il database 'negozio.db' dalla cartella 'Dati' alla cartella 'Backup_DB' situata sul Desktop dell'utente.
-        try:
-            source_db = os.path.join('Dati', 'negozio.db')
-
-            if not os.path.exists(source_db):
-                self.show_error(f"Il file {source_db} non esiste.")
-                return
-            desktop_path = os.path.join(os.path.expanduser('~'),
-                                        'Desktop')  # Ottieni il percorso della cartella Desktop dell'utente
-            destination_folder = os.path.join(desktop_path, 'Backup_DB')
-            os.makedirs(destination_folder,
-                        exist_ok=True)  # Assicurati che la cartella di destinazione esista, altrimenti creala
-            destination_db = os.path.join(destination_folder, 'backup_negozio.db')
-            shutil.copyfile(source_db, destination_db)  # Copia fisicamente il file del database
-            self.show_success(f"Database clonato con successo da {source_db} a {destination_db}.")
-
-        except shutil.SameFileError:
-            self.show_error("Il file di origine e destinazione sono uguali. Clonazione non necessaria.")
-
-        except PermissionError:
-            self.show_error("Permesso negato. Assicurati di avere i permessi necessari per accedere ai file.")
-
-        except Exception as e:
-            self.show_error(f"Errore durante la clonazione del database: {e}")
-
-    def show_error(self, message):
-        error_box = QMessageBox()
-        error_box.setIcon(QMessageBox.Warning)
-        error_box.setWindowTitle("Errore Backup")
-        error_box.setText(message)
-        error_box.exec_()
-
-    def show_success(self, message):
-        success_box = QMessageBox()
-        success_box.setIcon(QMessageBox.Information)
-        success_box.setWindowTitle("Backup Completato")
-        success_box.setText(message)
-        success_box.exec_()
 
 
 def main():
