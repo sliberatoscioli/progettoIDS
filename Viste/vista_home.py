@@ -200,8 +200,8 @@ class VistaHome(QWidget):
 
     def go_backup(self):
         from Controls.gestore_sistema import GestoreBackup
-        backup=GestoreBackup()
-        backup.backup_files()
+        effettua_backup=GestoreBackup()
+        effettua_backup.backup()
 
     def update_clock(self):
         current_time = QTime.currentTime().toString('HH:mm:ss')
