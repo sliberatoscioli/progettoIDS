@@ -11,6 +11,7 @@ class GestoreBackup:
         self.files_to_backup = ["Clienti.pkl", "Dipendenti.pkl", "Prodotti.pkl", "Acquisti.pkl"]
         self.msg_box = QMessageBox()
 
+    # Metodo per il backup dei file
     def backup(self):
         # Crea la cartella 'Backup' se non esiste e copia i file
         if not os.path.exists(self.cartella_backup):

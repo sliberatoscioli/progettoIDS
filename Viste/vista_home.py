@@ -1,5 +1,3 @@
-import os
-import shutil
 import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout
@@ -9,7 +7,7 @@ from PyQt5.QtCore import QTimer, QTime, Qt
 
 from Viste.VisteClienti.vista_cliente import VistaCliente
 from Viste.VisteDipendenti.vista_dipendente import vistaDipendente
-from Viste.VisteProdotti.vista_prodotto import VistaProdotto
+import Viste.VisteProdotti.vista_prodotto
 from Viste.VisteVendita.vista_vendita import VistaVendita
 
 
@@ -71,8 +69,6 @@ class CustomTitleBar(QWidget):
         maximize_button.clicked.connect(self.toggle_maximize_restore)
         layout.addWidget(maximize_button)
 
-
-
         self.is_maximized = False
 
     def close_window(self):
@@ -89,15 +85,23 @@ class CustomTitleBar(QWidget):
         self.is_maximized = not self.is_maximized
 
 
-
-
 class VistaHome(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
+        # Adattamento automatico allo stile del sistema operativo
+        QApplication.setStyle("Fusion")  # Usa Fusion per compatibilità cross-platform
+        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
+        QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
+
         self.setWindowTitle("Gestore Negozio")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)
+
+        # Rileva macOS per disabilitare la finestra senza bordi
+        if sys.platform == 'darwin':  # macOS
+            self.setWindowFlags(Qt.Window)  # Usa il bordo di default su macOS
+        else:
+            self.setWindowFlags(Qt.FramelessWindowHint)  # Nessun bordo su altri sistemi
 
         header_font = QFont("Times New Roman", 30, QFont.Bold)
         clock_font = QFont("Times New Roman", 24)
@@ -135,7 +139,7 @@ class VistaHome(QWidget):
         self.update_clock()
 
         grid_layout = QGridLayout()
-        grid_layout.setSpacing(40)
+        grid_layout.setSpacing(30)
 
         grid_layout.addWidget(
             self.get_colored_button("Gestore Clienti 🧑‍💼", "#4CAF50", "#ffffff", self.go_vista_clienti), 0, 0
@@ -176,6 +180,8 @@ class VistaHome(QWidget):
             }}
             """
         )
+        # Assicura che i pulsanti si adattino a diverse risoluzioni
+        button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         button.clicked.connect(on_click)
         return button
 
@@ -185,7 +191,7 @@ class VistaHome(QWidget):
         self.close()
 
     def go_magazzino(self):
-        self.prodotti_window = VistaProdotto()
+        self.prodotti_window = Viste.VisteProdotti.vista_prodotto.VistaProdotto()
         self.prodotti_window.showFullScreen()  # Mostra la finestra a schermo intero
         self.close()
 
@@ -193,6 +199,7 @@ class VistaHome(QWidget):
         self.dipendenti_window = vistaDipendente()
         self.dipendenti_window.showFullScreen()  # Mostra la finestra a schermo intero
         self.close()
+
     def go_vendita(self):
         self.vendita_window = VistaVendita()
         self.vendita_window.showFullScreen()
@@ -200,7 +207,7 @@ class VistaHome(QWidget):
 
     def go_backup(self):
         from Controls.gestore_sistema import GestoreBackup
-        effettua_backup=GestoreBackup()
+        effettua_backup = GestoreBackup()
         effettua_backup.backup()
 
     def update_clock(self):
@@ -211,14 +218,12 @@ class VistaHome(QWidget):
         QMessageBox.information(self, title, message)
 
 
-
 def main():
     app = QApplication(sys.argv)
     home_window = VistaHome()
     home_window.show()
     sys.exit(app.exec_())
 
+
 if __name__ == '__main__':
     main()
-
-#COMMIT FINALE

@@ -15,6 +15,7 @@ class GestoreDipendenti:
         self.msg_box = QMessageBox()
         self.file_path = 'Dati/Dipendenti.pkl'  # Percorso del file nella cartella "Dati"
 
+    # Metodo per l'aggiunta dei dipendenti
     def aggiungi_dipendenti(self, dipendente):
         # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
@@ -40,6 +41,7 @@ class GestoreDipendenti:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo per la rimozione dei dipendenti
     def rimuovi_dipendenti(self, IDdipendente):
         # Verifica se il file pickle esiste
         if not os.path.exists(self.file_path):
@@ -76,6 +78,7 @@ class GestoreDipendenti:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo che restituisce la lista dei dipendenti
     def ritorna_lista_dipendenti(self):
         try:
             # Verifica se il file dei dipendenti esiste
@@ -103,6 +106,7 @@ class GestoreDipendenti:
             self.msg_box.exec_()
             return []
 
+    # Metodo che restituisce un dipendente dato il suo ID
     def ritorna_dipendente_per_id(self, id):
         dipendenti = self.ritorna_lista_dipendenti()
 
@@ -117,6 +121,7 @@ class GestoreDipendenti:
         self.msg_box.exec_()
         return None
 
+    # Metodo di ricerca del dipendente per ID
     def esiste_dipendente(self, IDdipendente):
         # Verifica se il file pickle esiste
         if not os.path.exists(self.file_path):
@@ -136,6 +141,7 @@ class GestoreDipendenti:
 
         return 0
 
+    # Metodo di stampa di un report per i dipendenti
     def report_dipendenti(self):
         # Carica la lista dei clienti
         lista_clienti = GestoreClienti().ritorna_lista_clienti()

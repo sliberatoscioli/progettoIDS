@@ -8,6 +8,7 @@ class GestoreProdotti:
         self.msg_box = QMessageBox()
         self.file_path = 'Dati/Prodotti.pkl'  # Percorso del file nella cartella "Dati"
 
+    # Metodo che restituisce la lista dei prodotti
     def ritorna_lista_prodotti(self):
         try:
             if not os.path.exists(self.file_path):
@@ -40,6 +41,7 @@ class GestoreProdotti:
             self.msg_box.exec_()
             return []
 
+    # Metodo per l'aggiunta di un prodotto
     def aggiungi_prodotto(self, prodotto):
         # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
@@ -82,6 +84,7 @@ class GestoreProdotti:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo che restituisce l'ultimo ID salvato
     def ritorna_ultimo_IDprodotto(self):
         prodotti = self.ritorna_lista_prodotti()
         if not prodotti:
@@ -92,7 +95,7 @@ class GestoreProdotti:
         ultimo_id = max(prodotto.get_id_prodotto() for prodotto in prodotti)
         return ultimo_id
 
-    #Metodo ricerca prodotto per ID
+    # Metodo ricerca prodotto per ID
     def ritorna_prodotto_ID(self, id_prodotto):
         prodotti = self.ritorna_lista_prodotti()
 
@@ -102,6 +105,7 @@ class GestoreProdotti:
 
         return None  # Restituisce None se non trova nessun prodotto con l'ID specificato
 
+    # Metodo per l'eliminazione di un prodotto
     def elimina_prodotto(self, id_prodotto):
         prodotti = self.ritorna_lista_prodotti()
 
@@ -128,6 +132,7 @@ class GestoreProdotti:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo che restituisce i prodotti con giacenza critica (<10)
     def ritorna_prodotto_giacenza_critica(self):
         # Ricavo la lista dei prodotti
         prodotti = self.ritorna_lista_prodotti()
@@ -137,6 +142,7 @@ class GestoreProdotti:
 
         return prodotti_critici
 
+    # Metodo per riassortire la giacenza dei prodotti critici
     def riassortimento_automatico(self, id_prodotto):
 
         prodotti = self.ritorna_lista_prodotti()

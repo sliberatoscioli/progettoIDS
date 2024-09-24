@@ -1,9 +1,4 @@
 import pickle
-import os
-from datetime import datetime
-
-from PyQt5.QtWidgets import QMessageBox
-from reportlab.pdfgen import canvas
 from datetime import datetime
 from PyQt5.QtWidgets import QMessageBox
 from reportlab.lib.pagesizes import A4
@@ -14,7 +9,6 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 import os
 
-
 class GestoreVendite:
 
     def __init__(self):
@@ -22,7 +16,7 @@ class GestoreVendite:
         self.msg_box = QMessageBox()
         self.file_path = 'Dati/Acquisti.pkl'  # Percorso del file nella cartella "Dati"
 
-    # METODO DI RITORNO DELLA LISTA ACQUISTI
+    # Metodo che restituisce la lista degli acquisti
     def ritorna_lista_acquisti(self):
         try:
             if not os.path.exists(self.file_path):
@@ -56,7 +50,7 @@ class GestoreVendite:
             return []
 
 
-    # METODO AGGIUNGI ACQUISTO
+    # Metodo per l'aggiunta di un acquisto
     def aggiungi_acquisto(self, acquisto):
         # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
@@ -98,6 +92,7 @@ class GestoreVendite:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo che restituisce l'ultimo ID della lista di acquisti
     def ritorna_ultimo_ID_acquisto(self):
         acquisti = self.ritorna_lista_acquisti()
         if not acquisti:
@@ -108,6 +103,7 @@ class GestoreVendite:
         ultimo_id = max(acquisto.get_id() for acquisto in acquisti)
         return ultimo_id
 
+    # Metodo che crea lo scontrino per il caricamento wallet
     def creaScontrinoWallet(self, telefono, importo, metodoPagamento):
         # Determina il percorso del desktop dell'utente
         desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
@@ -116,7 +112,7 @@ class GestoreVendite:
         if not os.path.exists(cartella_wallet):
             os.makedirs(cartella_wallet)
 
-        # Definisci il nome del file PDF con il telefono come identificativo
+        # Impostazione del nome e del percorso del file PDF
         nome_file = f'Scontrino_{telefono}.pdf'
         percorso_file = os.path.join(cartella_wallet, nome_file)
 
@@ -163,7 +159,7 @@ class GestoreVendite:
         msg_box.setWindowTitle("Successo")
         msg_box.exec_()
 
-    # METODO PER LA CREAZIONE DELLO SCONTRINO FISCALE
+    # Metodo per la creazione di uno scontrino fiscale per l'acquisto
     def CreaScontrinoAcquisto(self, prodotti, prezzoSconto, codiceVenditaCompletato):
         desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
 
@@ -253,6 +249,7 @@ class GestoreVendite:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo che stampa la lista degli acquisti di un cliente
     def storico_acquisti_cliente(self, ID_cliente):
         lista_acquisti_cliente = []
         lista_acquisti = self.ritorna_lista_acquisti()
@@ -278,7 +275,7 @@ class GestoreVendite:
 
         return lista_acquisti_cliente
 
-    #METODO CHE RESTITUISCE ACQUISTO CON UN CODICE ACQUISTO PER RESO
+    # Metodo che restituisce un acquisto
     def ricerca_acquisti(self, codice_acquisto):
         lista_acquisti_ritorna = []
         lista_acquisti = self.ritorna_lista_acquisti()
@@ -287,7 +284,7 @@ class GestoreVendite:
             if acquisto.get_codice_vendita() == codice_acquisto:
                 # Ottieni le informazioni rilevanti dall'acquisto
                 id_acquisto = acquisto.get_id()
-                id_cliente = acquisto.get_cliente().get_id_cliente()  # Supponendo che ci sia un metodo per ottenere l'ID del cliente
+                id_cliente = acquisto.get_cliente().get_id_cliente()
                 data_acquisto = acquisto.get_data_acquisto()
                 metodo_pagamento = acquisto.get_metodo_pagamento()
                 codice_vendita = acquisto.get_codice_vendita()
@@ -320,6 +317,7 @@ class GestoreVendite:
                     lista_acquisti_ritorna.append(acquisto_tuple)
         return lista_acquisti_ritorna
 
+    # Metodo per il reso di un prodotto
     def reso_prodotto(self, id_prodotto, codice_vendita, quantita, prezzo, id_cliente):
         # Percorso del file per i clienti e gli acquisti
         percorso_file_clienti = os.path.join('Dati', 'Clienti.pkl')
@@ -397,10 +395,10 @@ class GestoreVendite:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
-    # Metodo per il riepilogo giornalieri
+    # Metodo per il riepilogo giornaliero delle vendite
     def riepilogo_giornaliero(self):
         lista_acquisti = self.ritorna_lista_acquisti()  # Prelevo tutti gli acquisti nel file
-        oggi = datetime.now().date()  # Ottieni la data di oggi (solo data)
+        oggi = datetime.now().date()  # Ottieni la data odierna
 
         try:
             with open('Dati/Clienti.pkl', 'rb') as file:
@@ -411,7 +409,7 @@ class GestoreVendite:
         totale_carta_di_credito = 0
         totale_contanti = 0
         totale_saldo_wallet = sum(cliente.get_saldo_wallet() for cliente in lista_clienti) if lista_clienti else 0
-        info = []  # informazioni sul cliente
+        info = []
         quantita_per_tipo = {}  # Dizionario per raccogliere le quantità per tipo di prodotto
 
         for acquisto in lista_acquisti:
@@ -427,7 +425,7 @@ class GestoreVendite:
                 if data_solo_giorno_mese_anno == oggi:
                     for prodotto in acquisto.get_prodotti():
                         quantita = prodotto.get_quantita()
-                        prezzo = float(prodotto.get_prezzo())  # Assicurati che il prezzo sia un float
+                        prezzo = float(prodotto.get_prezzo())
                         tot = quantita * prezzo
 
                         cliente = acquisto.get_cliente()
@@ -459,16 +457,7 @@ class GestoreVendite:
         self.crea_pdf_riassunto_giornaliero(info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo)
         return info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo
 
-    from datetime import datetime
-    import os
-    from reportlab.lib import colors
-    from reportlab.lib.pagesizes import A4
-    from reportlab.lib.units import mm
-    from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
-    from reportlab.platypus import Spacer
-    from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-    from reportlab.pdfgen import canvas
-
+    # Metodo per la stampa del riepilogo in formato PDF
     def crea_pdf_riassunto_giornaliero(self, dati, totale_contanti, totale_carta_di_credito, totale_saldo_wallet,
                                        vendite_per_tipo):
         # Percorso alla cartella sul desktop
@@ -510,7 +499,7 @@ class GestoreVendite:
         heading.wrapOn(c, width - 2 * margin, height - 2 * margin)
         heading.drawOn(c, margin, height - 3 * margin)
 
-        # Prepara i dati per la tabella delle vendite
+        # Dati per la tabella delle vendite
         table_data = [["Cliente", "Prodotto", "Quantità", "Prezzo", "Metodo Pagamento"]]
         for info in dati:
             cliente = f"{info[0]} {info[1]}"
@@ -520,7 +509,7 @@ class GestoreVendite:
             metodo_pagamento = info[13]
             table_data.append([cliente, prodotto, quantita, prezzo, metodo_pagamento])
 
-        # Crea la tabella delle informazioni (bianco e nero)
+        # Crea la tabella delle informazioni
         table = Table(table_data)
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
@@ -540,7 +529,7 @@ class GestoreVendite:
         # Calcola l'altezza corrente per la posizione successiva
         current_height = height - 5 * margin - len(table_data) * 16
 
-        # Sezione: Totale incassi
+        # Totale incassi
         heading = Paragraph("Totale Incassi", heading_style)
         heading.wrapOn(c, width - 2 * margin, height - 2 * margin)
         heading.drawOn(c, margin, current_height - 1.5 * margin)
@@ -566,7 +555,6 @@ class GestoreVendite:
             ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
         ]))
 
-        # Draw the total incassi table
         current_height -= 2 * margin + len(table_data_incassi) * 16
         table_incassi.wrapOn(c, width - 2 * margin, height - 2 * margin)
         table_incassi.drawOn(c, margin, current_height)
@@ -593,7 +581,6 @@ class GestoreVendite:
             ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
         ]))
 
-        # Draw the sales per type table
         current_height -= 2 * margin + len(table_data_vendite) * 16
         table_vendite.wrapOn(c, width - 2 * margin, height - 2 * margin)
         table_vendite.drawOn(c, margin, current_height)

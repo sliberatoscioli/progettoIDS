@@ -14,6 +14,7 @@ class GestoreClienti:
         self.msg_box = QMessageBox()
         self.file_path = 'Dati/Clienti.pkl'  # Percorso del file nella cartella "Dati"
 
+    # Metodo che restituisce la lista dei clienti
     def ritorna_lista_clienti(self):
         try:
             # Verifica se il file dei clienti esiste
@@ -47,6 +48,7 @@ class GestoreClienti:
             self.msg_box.exec_()
             return []
 
+    # Metodo per l'aggiunta del cliente
     def aggiungi_cliente(self, cliente):
         # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
@@ -91,6 +93,7 @@ class GestoreClienti:
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
+    # Metodo per la stampa della lista dei clienti in formato PDF
     def stampa_pdf_clienti(self):
         clienti = self.ritorna_lista_clienti()
 
@@ -155,6 +158,7 @@ class GestoreClienti:
             self.msg_box.setIcon(QMessageBox.Critical)
             self.msg_box.exec_()
 
+    # Metodo per l'eliminazione dei clienti
     def elimina_cliente(self, search_text):
         clienti = self.ritorna_lista_clienti()
 
@@ -256,6 +260,7 @@ class GestoreClienti:
 
         return risultati
 
+    # Metodo per la ricarica del portafoglio virtuale
     def carica_wallet(self, telefono, ricarica, metodo_pagamento):
         # Carica i clienti
         lista_clienti = self.ritorna_lista_clienti()

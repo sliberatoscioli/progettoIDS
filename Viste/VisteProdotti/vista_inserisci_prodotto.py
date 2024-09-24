@@ -5,7 +5,6 @@ from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
 from Attivita.prodotto import Prodotto
 import Viste.vista_home
-from PyQt5.QtWidgets import QDateEdit
 
 from Attivita.scatola import Scatola
 
