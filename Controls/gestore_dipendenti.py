@@ -6,9 +6,7 @@ from PyQt5.QtWidgets import QMessageBox
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
-
 from Controls.gestore_clienti import GestoreClienti
-
 
 class GestoreDipendenti:
 

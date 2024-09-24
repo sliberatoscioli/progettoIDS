@@ -92,6 +92,7 @@ class GestoreProdotti:
         ultimo_id = max(prodotto.get_id_prodotto() for prodotto in prodotti)
         return ultimo_id
 
+    #Metodo ricerca prodotto per ID
     def ritorna_prodotto_ID(self, id_prodotto):
         prodotti = self.ritorna_lista_prodotti()
 
@@ -167,21 +168,21 @@ class GestoreProdotti:
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.exec_()
 
-    # METODO PER AGGIORNARE LA LISTA DEI PRODOTTI
+    # Metodo per aggiornare la lista dei prodotti
     def aggiorna_prodotti(self, prodotti_acquistati):
         # Carica la lista di prodotti esistente
         lista_prodotti = self.ritorna_lista_prodotti()
 
         # Aggiorna la giacenza dei prodotti
         for prodotto_acquistato in prodotti_acquistati:
-            id_prodotto = prodotto_acquistato.get_id_prodotto()  # Supponendo ci sia un metodo per ottenere l'ID
-            quantita = prodotto_acquistato.get_quantita()  # Supponendo ci sia un metodo per ottenere la quantità
+            id_prodotto = prodotto_acquistato.get_id_prodotto()
+            quantita = prodotto_acquistato.get_quantita()
 
             # Trova il prodotto nella lista
             for p in lista_prodotti:
                 if p.get_id_prodotto() == id_prodotto:
                     nuova_giacenza = int(p.get_giacenza()) - quantita  # Aggiorna la giacenza
-                    p.aggiorna_giacenza(nuova_giacenza)  # Supponendo ci sia un metodo per impostare la giacenza
+                    p.aggiorna_giacenza(nuova_giacenza)  # Imposta nuova giacenza
                     break
         # Salva la lista aggiornata di prodotti nel file
         with open(self.file_path, 'wb') as file:

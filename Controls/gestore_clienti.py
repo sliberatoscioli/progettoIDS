@@ -7,8 +7,6 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.pagesizes import letter
 import webbrowser  # Per aprire il PDF
 
-
-
 class GestoreClienti:
 
     def __init__(self):
@@ -195,7 +193,7 @@ class GestoreClienti:
         risultati = []
 
         for cliente in clienti:
-            if search_text == cliente.get_nome_cliente():  # Confronta ignorando maiuscole/minuscole
+            if search_text == cliente.get_nome_cliente():  # Confronta il nome ignorando maiuscole/minuscole
                 risultati.append(cliente)
 
         if not risultati:
@@ -213,7 +211,7 @@ class GestoreClienti:
         search_text = str(search_text)
 
         for cliente in clienti:
-            if search_text == str(cliente.get_id_cliente()):  # Assicurati che il confronto sia esatto
+            if search_text == str(cliente.get_id_cliente()):  #Confronta ID
                 risultati.append(cliente)
 
         if not risultati:
@@ -223,7 +221,7 @@ class GestoreClienti:
 
         return risultati
 
-    # Metodo che ricerca cliente per numero di telefono
+    # Metodo ricerca cliente per numero di telefono
     def cerca_per_telefono(self, search_text):
         clienti = self.ritorna_lista_clienti()
         risultati = []

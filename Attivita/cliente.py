@@ -12,7 +12,7 @@ class Cliente:
         self.telefono = telefono
         self.saldo_wallet = 0.0
 
-    #Metodi di classe
+    #METODI GETTER E SETTER
 
     def get_id_cliente(self):
         return self.id

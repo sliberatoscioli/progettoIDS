@@ -12,7 +12,7 @@ class Prodotto:
         self.prezzo = prezzo
         self.quantita = None
 
-    # METODI GETTER
+    # METODI GETTER E SETTER
     def get_id_prodotto(self):
         return self.id
 
