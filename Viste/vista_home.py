@@ -140,7 +140,7 @@ class VistaHome(QWidget):
             self.get_colored_button("Gestore Dipendenti 👷‍", "#007BFF", "#ffffff", self.go_dipendenti), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Gestore Vendite 🛒", "#6A00FF", "#ffffff", self.go_vendita), 1, 1
+            self.get_colored_button("Gestore Vendite 🛒", "#4B0082", "#ffffff", self.go_vendita), 1, 1
         )
         grid_layout.addWidget(
             self.get_colored_button("Backup 💾", "#FF8C00", "#ffffff", self.go_backup), 2, 0, 1, 2

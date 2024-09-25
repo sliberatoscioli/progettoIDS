@@ -150,16 +150,16 @@ class VistaCliente(QWidget):
         grid_layout.setSpacing(60)
 
         grid_layout.addWidget(
-            self.get_colored_button("Inserisci Cliente 🧑‍💼", "#4CAF50", "#ffffff", self.go_inserisci_cliente), 0, 0
+            self.get_colored_button("Inserisci Cliente 🧑‍💼", "#32CD32", "#ffffff", self.go_inserisci_cliente), 0, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Ricerca e Gestisci Cliente🔍", "#FF0000", "#ffffff", self.go_ricerca_cliente), 0, 1
+            self.get_colored_button("Ricerca e Gestisci Cliente🔍", "#F1C40F", "#ffffff", self.go_ricerca_cliente), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Stampa Clienti  📄", "#007BFF", "#ffffff", self.go_stampa_clienti), 1, 0
+            self.get_colored_button("Stampa Clienti  📄", "#FF4500", "#ffffff", self.go_stampa_clienti), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("HOME  🏠", "#6A00FF", "#ffffff", self.go_home), 1, 1
+            self.get_colored_button("HOME  🏠", "#2980B9", "#ffffff", self.go_home), 1, 1
         )
 
         main_layout.addLayout(grid_layout)

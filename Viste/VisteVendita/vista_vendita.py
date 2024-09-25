@@ -152,18 +152,18 @@ class VistaVendita(QWidget):
 
         # Pulsanti simmetrici
         grid_layout.addWidget(
-            self.get_colored_button("Vendita Prodotti 👛🏷️", "#FFB703", "#ffffff", self.go_venditaProdotti), 0, 0
+            self.get_colored_button("Vendita Prodotti 👛🏷️", "#32CD32", "#ffffff", self.go_venditaProdotti), 0, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Reso Prodotti 📦🔄", "#FF6F61", "#ffffff",
+            self.get_colored_button("Reso Prodotti 📦🔄", "#F1C40F", "#ffffff",
                                     self.go_resoProdotti), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Carica Wallet 📁↩", "#00B4D8", "#ffffff",
+            self.get_colored_button("Carica Wallet 📁↩", "#FF4500", "#ffffff",
                                     self.go_caricaWallet), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Riepilogo Giornaliero 📝📈", "#9AE66E", "#ffffff",
+            self.get_colored_button("Riepilogo Giornaliero 📝📈", "#2980B9", "#ffffff",
                                     self.go_riepilogoGiornaliero), 1, 1
         )
 
@@ -176,19 +176,19 @@ class VistaVendita(QWidget):
 
     def get_colored_button(self, title, bg_color, text_color, on_click):
         button = QPushButton(title)
-        button.setFont(QFont("Times New Roman ", 30, QFont.Bold))
+        button.setFont(QFont("Times New Roman", 33, QFont.Bold))
         button.setStyleSheet(
             f"""
-                        QPushButton {{
-                            background-color: {bg_color};
-                            color: {text_color};
-                            border-radius: 100px;
-                            padding: 100px;
-                        }}
-                        QPushButton:hover {{
-                            background-color: {bg_color[:-1]}E6; 
-                        }}
-                        """
+            QPushButton {{
+                background-color: {bg_color};
+                color: {text_color};
+                border-radius: 100px;
+                padding: 100px;
+            }}
+            QPushButton:hover {{
+                opacity: 0.8;
+            }}
+            """
         )
         button.clicked.connect(on_click)
         return button

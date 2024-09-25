@@ -153,16 +153,16 @@ class VistaProdotto(QWidget):
 
         # Pulsanti simmetrici
         grid_layout.addWidget(
-            self.get_colored_button("🧢👖 Inserisci Prodotto 👕👗", "#2ECC71", "#ffffff", self.go_inserisci_prodotto), 0, 0
+            self.get_colored_button("🧢👖 Inserisci Prodotto 👕👗", "#32CD32", "#ffffff", self.go_inserisci_prodotto), 0, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Lista prodotti \n in magazzino 📦📄", "#E74C3C", "#ffffff", self.go_stampa_magazzino), 0, 1
+            self.get_colored_button("Lista prodotti \n in magazzino 📦📄", "#F1C40F", "#ffffff", self.go_stampa_magazzino), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Ottieni info prodotto \n Elimina prodotto 📄❌", "#9B59B6", "#ffffff", self.go_vista_ottieni_info_prodotto), 1, 0
+            self.get_colored_button("Ottieni info prodotto \n Elimina prodotto 📄❌", "#FF4500", "#ffffff", self.go_vista_ottieni_info_prodotto), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Riassortimento Automatico\nProdotto ⚙", "#3498DB", "#ffffff", self.go_riassortimento), 1, 1
+            self.get_colored_button("Riassortimento Automatico\nProdotto ⚙", "#2980B9", "#ffffff", self.go_riassortimento), 1, 1
         )
 
         main_layout.addLayout(grid_layout)
@@ -174,7 +174,7 @@ class VistaProdotto(QWidget):
 
     def get_colored_button(self, title, bg_color, text_color, on_click):
         button = QPushButton(title)
-        button.setFont(QFont("Times New Roman ", 30, QFont.Bold))
+        button.setFont(QFont("Times New Roman", 33, QFont.Bold))
         button.setStyleSheet(
             f"""
             QPushButton {{
@@ -184,7 +184,7 @@ class VistaProdotto(QWidget):
                 padding: 100px;
             }}
             QPushButton:hover {{
-                background-color: {bg_color[:-1]}E6; 
+                opacity: 0.8;
             }}
             """
         )

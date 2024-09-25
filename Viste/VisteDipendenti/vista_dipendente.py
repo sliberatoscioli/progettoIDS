@@ -148,16 +148,16 @@ class vistaDipendente(QWidget):
         grid_layout.setSpacing(60)
 
         grid_layout.addWidget(
-            self.get_colored_button("Inserisci dipendente 👷", "#4CAF50", "#ffffff", self.go_inserisci_dipendente), 0, 0
+            self.get_colored_button("Inserisci dipendente 👷", "#32CD32", "#ffffff", self.go_inserisci_dipendente), 0, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Rimuovi Dipendente  ❌", "#FF0000", "#ffffff", self.go_rimuovi_cliente), 0, 1
+            self.get_colored_button("Rimuovi Dipendente  ❌", "#F1C40F", "#ffffff", self.go_rimuovi_cliente), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Report dipendente  📊‍", "#007BFF", "#ffffff", self.go_report), 1, 0
+            self.get_colored_button("Report dipendente  📊‍", "#FF4500", "#ffffff", self.go_report), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("HOME  🏠", "#6A00FF", "#ffffff", self.go_home), 1, 1
+            self.get_colored_button("HOME  🏠", "#2980B9", "#ffffff", self.go_home), 1, 1
         )
 
         main_layout.addLayout(grid_layout)
