@@ -19,7 +19,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -114,8 +114,8 @@ class RimuoviCliente(QMainWindow):
         # Impostazioni della finestra
         self.setWindowTitle("RICERCA CLIENTE")
         self.setGeometry(100, 100, 800, 600)
-        self.setStyleSheet("background-color: #34495e; color: white;")  # Sfondo nero e testo bianco
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setStyleSheet("background-color: #34495e; color: white;")
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -148,12 +148,12 @@ class RimuoviCliente(QMainWindow):
 
         # Campo di ricerca
         self.search_label = QLabel("INSERISCI INFORMAZIONI CLIENTE:")
-        self.search_label.setStyleSheet("color: white;")  # Testo bianco per la label
+        self.search_label.setStyleSheet("color: white;")
         self.search_input = QLineEdit()
         search_layout.addWidget(self.search_label)
         search_layout.addWidget(self.search_input)
 
-        # Dropdown per la selezione del tipo di ricerca
+        # Selezione del tipo di ricerca
         self.search_type_combo = QComboBox()
         self.search_type_combo.addItems([
             "Ricerca per Nome",
@@ -167,7 +167,7 @@ class RimuoviCliente(QMainWindow):
         self.search_button = QPushButton("Cerca")
         self.search_button.setStyleSheet("background-color: purple; color: white; font-weight: bold;")  # Bottone viola
         self.search_button.clicked.connect(self.search)
-        self.search_button.setMinimumHeight(25)  # Altezza minima del pulsant
+        self.search_button.setMinimumHeight(25)  # Altezza minima del pulsante
         search_layout.addWidget(self.search_button)
 
         # Layout per l'ordinamento
@@ -201,7 +201,7 @@ class RimuoviCliente(QMainWindow):
             "background-color: black; color: purple; font-weight: bold;"
         )
 
-        # Aggiungi la tabella al layout principale
+        #  Tabella aggiunta al layout principale
         main_layout.addWidget(self.table_widget)
 
         # Spazio sotto i widget principali
@@ -223,15 +223,15 @@ class RimuoviCliente(QMainWindow):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
+    # Metodo di ricerca e recupero dati
     def search(self):
         search_text = self.search_input.text()
         search_type = self.search_type_combo.currentText()
 
-        # Oggetto cliente
         from Controls.gestore_clienti import GestoreClienti
         clientiPK = GestoreClienti()
 
-        # Determina il tipo di ricerca e costruisci la query SQL appropriata
+        # Scelta del tipo di ricerca e costruisci la query SQL appropriata
         if search_type == "Ricerca per Nome":
             clienti = clientiPK.cerca_per_nome(search_text.upper())
         elif search_type == "Ricerca per ID":
@@ -243,32 +243,32 @@ class RimuoviCliente(QMainWindow):
         else:
             clienti = []
 
-        # Imposta le intestazioni delle colonne
+        # Intestazioni delle colonne
         headers = ["ID Cliente", "Nome", "Cognome", "Data di Nascita", "Residenza", "Codice Fiscale", "Email",
                    "Telefono", "IDDIPENDENTE(Inserimento)", "Saldo_wallet €"]
 
-        # Aggiungi la colonna "Azioni" solo se necessario
+        # Aggiunta della colonna "Azioni" solo se necessario
         if search_type in ["Ricerca per ID", "Ricerca per Numero Telefonico"]:
             headers.append("Azioni")
 
-        # Assicurati che i dati siano stati recuperati
+        # Controllo riguardo il recupero dei dati
         if not clienti:
             self.table_widget.setRowCount(0)
-            self.table_widget.setColumnCount(len(headers))  # Imposta il numero corretto di colonne
+            self.table_widget.setColumnCount(len(headers))
             self.table_widget.setHorizontalHeaderLabels(headers)
             return
 
-        # Imposta il numero di righe e colonne
+        # Numero di righe e colonne
         self.table_widget.setRowCount(len(clienti))
-        self.table_widget.setColumnCount(len(headers))  # Imposta il numero corretto di colonne
+        self.table_widget.setColumnCount(len(headers))
 
-        # Imposta le intestazioni delle colonne
+        # Intestazioni delle colonne
         self.table_widget.setHorizontalHeaderLabels(headers)
 
-        # Popola la tabella con i dati
+        # Popolamento della tabella con i dati
         for row_idx, cliente in enumerate(clienti):
             dipendente = cliente.get_dipendente_inserimento()
-            dipendente_id = dipendente.get_id() if dipendente else "N/A"  # Gestisce il caso in cui il dipendente sia None
+            dipendente_id = dipendente.get_id() if dipendente else "N/A"  # Dipendente è None
             row_data = [
                 cliente.get_id_cliente(),
                 cliente.get_nome_cliente(),
@@ -288,30 +288,30 @@ class RimuoviCliente(QMainWindow):
                     item.setBackground(Qt.darkMagenta)
                     self.table_widget.setItem(row_idx, col_idx, item)
 
-            # Aggiungi pulsante in base al tipo di ricerca
+            # Aggiunta del pulsante in base al tipo di ricerca
             if search_type == "Ricerca per ID":
                 action_button = QPushButton("Stampa Storico Cliente 📄")
                 action_button.setStyleSheet("background-color: green; color: white; font-weight: bold;")
-                action_button.clicked.connect(partial(self.perform_action1, cliente.get_id_cliente()))
+                action_button.clicked.connect(partial(self.stampa_storico_cliente, cliente.get_id_cliente()))
                 self.table_widget.setCellWidget(row_idx, len(headers) - 1, action_button)
 
 
             elif search_type == "Ricerca per Numero Telefonico":
                 action_button = QPushButton("Rimuovi Cliente")
                 action_button.setStyleSheet("background-color: red; color: white; font-weight: bold;")
-                action_button.clicked.connect(partial(self.perform_action2, cliente.get_telefono_cliente()))
+                action_button.clicked.connect(partial(self.rimozione_cliente, cliente.get_telefono_cliente()))
                 self.table_widget.setCellWidget(row_idx, len(headers) - 1, action_button)
 
         self.table_widget.resizeColumnsToContents()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
-    def perform_action1(self, cliente_id):
+    def stampa_storico_cliente(self, cliente_id):
         from Viste.VisteClienti.vista_stampa_storico import VistaStampaStoricoCliente
         self.Vista_Storico = VistaStampaStoricoCliente(cliente_id)
         self.Vista_Storico.showFullScreen()
         self.close()
 
-    def perform_action2(self, telefono):
+    def rimozione_cliente(self, telefono):
         from Controls.gestore_clienti import GestoreClienti
         GestoreClienti().elimina_cliente(telefono)
 
@@ -319,7 +319,7 @@ class RimuoviCliente(QMainWindow):
         QMessageBox.information(self, title, message)
 
 
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     ricerca_cliente = RimuoviCliente()

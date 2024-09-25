@@ -111,7 +111,7 @@ class VistaOttieniInfoProdotto(QMainWindow):
         self.setWindowTitle("Tabella Prodotto")
         self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #2c3e50;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Layout principale
         main_layout = QVBoxLayout()
@@ -173,7 +173,7 @@ class VistaOttieniInfoProdotto(QMainWindow):
             }
         """)
 
-        # Aggiungi la tabella al layout principale
+        # Tabella aggiunta al layout principale
         main_layout.addWidget(self.table_widget)
 
         # Widget centrale
@@ -199,34 +199,33 @@ class VistaOttieniInfoProdotto(QMainWindow):
             self.id_entry.setStyleSheet("color: red; background-color: #1a1a1a;")
             self.id_entry.setPlaceholderText("Inserisci un ID valido")
 
+    # Metodo per il caricamento delle informazioni
     def load_data(self, id_prodottocercato):
-        # Importa gestoreProdotti
         from Controls.gestore_prodotti import GestoreProdotti
 
         prodotto = GestoreProdotti().ritorna_prodotto_ID(id_prodottocercato)
 
-        # Assicurati che il prodotto sia stato recuperato
+        # Si verifica se il prodotto è stato recuperato
         if not prodotto:
             self.table_widget.setRowCount(0)
-            self.table_widget.setColumnCount(12)  # Imposta il numero corretto di colonne
+            self.table_widget.setColumnCount(12)
             self.table_widget.setHorizontalHeaderLabels(
                 ["ID PRODOTTO", "MARCA", "COLORE", "PREZZO ", "TAGLIA", "DESCRIZIONE\n PRODOTTO", "TIPO\nPRODOTTO",
                  "GIACENZA", "IDSCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO", "AZIONE\nRIMUOVI PRODOTTO"])
             return
 
-        # Recupera la scatola associata al prodotto
-        scatola = prodotto.get_scatola()
+        scatola = prodotto.get_scatola()        # Recupero della scatola associata al prodotto
 
-        # Imposta il numero di righe e colonne
-        self.table_widget.setRowCount(1)  # Solo una riga per il singolo prodotto e scatola
-        self.table_widget.setColumnCount(12)  # Imposta il numero corretto di colonne
+        # Numero di righe e colonne
+        self.table_widget.setRowCount(1)
+        self.table_widget.setColumnCount(12)
 
-        # Imposta le intestazioni delle colonne
+        # Intestazioni delle colonne
         self.table_widget.setHorizontalHeaderLabels(
             ["ID PRODOTTO", "MARCA", "COLORE", "PREZZO ", "TAGLIA", "DESCRIZIONE\n PRODOTTO", "TIPO\nPRODOTTO",
              "GIACENZA", "IDSCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO", "AZIONE\nRIMUOVI PRODOTTO"])
 
-        # Popola la tabella con i dati
+        # Popolamento della tabella con i dati
         self.table_widget.setItem(0, 0, QTableWidgetItem(str(prodotto.get_id_prodotto())))
         self.table_widget.setItem(0, 1, QTableWidgetItem(prodotto.get_marca()))
         self.table_widget.setItem(0, 2, QTableWidgetItem(prodotto.get_colore()))
@@ -239,13 +238,12 @@ class VistaOttieniInfoProdotto(QMainWindow):
         self.table_widget.setItem(0, 9, QTableWidgetItem(scatola.get_descrizione_scatola()))
         self.table_widget.setItem(0, 10, QTableWidgetItem(str(scatola.get_magazzino_scatola())))
 
-        # Crea il pulsante di azione
+        # Creazione del pulsante di azione
         action_button = QPushButton("ELIMINA PRODOTTO")
         action_button.setStyleSheet("background-color: red; color: white; font-weight: bold;")
-        action_button.clicked.connect(partial(self.perform_action1, prodotto.get_id_prodotto()))
+        action_button.clicked.connect(partial(self.elimina_prodotto, prodotto.get_id_prodotto()))
         self.table_widget.setCellWidget(0, 11, action_button)
 
-        # Ridimensiona le colonne e adatta l'ultima colonna
         self.table_widget.resizeColumnsToContents()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
@@ -253,22 +251,23 @@ class VistaOttieniInfoProdotto(QMainWindow):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
-    def perform_action1(self, prodotto_id):
+    # Metodo per l'eliminazione di un prodotto dal file
+    def elimina_prodotto(self, prodotto_id):
         from Controls.gestore_prodotti import GestoreProdotti
 
         gestore_prodotto = GestoreProdotti()
 
         # Eliminare il prodotto
         gestore_prodotto.elimina_prodotto(prodotto_id)
-        # Trova e rimuovi la riga dalla tabella
+        # Ricerca e rimozione della riga dalla tabella
         row_count = self.table_widget.rowCount()
         for row in range(row_count):
-            item = self.table_widget.item(row, 0)  # Assumendo che l'ID prodotto sia nella prima colonna
+            item = self.table_widget.item(row, 0)
             if item and item.text() == str(prodotto_id):
                 self.table_widget.removeRow(row)
                 break
 
-
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     window = VistaOttieniInfoProdotto()
@@ -278,4 +277,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-#COMMIT FIN

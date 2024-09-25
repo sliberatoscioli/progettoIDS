@@ -22,7 +22,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -118,7 +118,7 @@ class InserisciCliente(QMainWindow):
         # Impostazioni della finestra
         self.setWindowTitle("INSERISCI CLIENTE")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -140,20 +140,20 @@ class InserisciCliente(QMainWindow):
         self.datetime_label = QLabel(self)
         self.datetime_label.setFont(label_font)
         self.datetime_label.setStyleSheet("color: white;")
-        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)
         self.update_time()
 
-        # Label per il titolo "LOGIN NEW SHOPS"
+        # Label per il titolo
         title_label = QLabel("INSERISCI NUOVO CLIENTE", self)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white;")
-        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)
 
-        # Icona utente simulata
+        # Icona
         user_icon = QLabel("🧑‍💼", self)
         user_icon.setFont(QFont("Arial", 60))
         user_icon.setStyleSheet("color: white;")
-        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)
 
         # Campo Nome
         self.nome_entry = QLineEdit(self)
@@ -199,8 +199,8 @@ class InserisciCliente(QMainWindow):
         self.data_entry = QDateEdit(self)
         self.data_entry.setFont(label_font)
         self.data_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
-        self.data_entry.setDisplayFormat("dd/MM/yyyy")  # Formato della data
-        self.data_entry.setCalendarPopup(True)  # Abilita la selezione della data tramite un calendario
+        self.data_entry.setDisplayFormat("dd/MM/yyyy")
+        self.data_entry.setCalendarPopup(True)
         self.data_entry.setMinimumHeight(40)  # Altezza minima del campo di input
         main_layout.addWidget(self.data_entry)
 
@@ -246,7 +246,7 @@ class InserisciCliente(QMainWindow):
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)
 
-        # Imposta il layout principale nel widget centrale
+        # Layout principale nel widget centrale
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -256,10 +256,11 @@ class InserisciCliente(QMainWindow):
         self.datetime_label.setText(current_time)
         QTimer.singleShot(1000, self.update_time)
 
+    #Metodo per ottenere l'ultimo ID salvato
     def _ottieni_ultimo_id(self):
         lista_clienti_salvata = []
 
-        # Verifica se il file Dipendenti.pkl esiste
+        # Si verifica se il file Dipendenti.pkl esiste
         if os.path.isfile('Dati/Clienti.pkl'):
             with open('Dati/Clienti.pkl', 'rb') as f:
                 lista_clienti_salvata = pickle.load(f)
@@ -272,18 +273,18 @@ class InserisciCliente(QMainWindow):
 
     def enter_clicked(self):
 
-        # Recupera i dati dalle entry e assicurati che non siano vuoti
+        # Recupero dei dati dalle entry (controllo che non siano vuoti)
         ID = self._ottieni_ultimo_id() + 1
         nome = self.nome_entry.text().upper()
         cognome = self.cognome_entry.text().upper()
         residenza = self.residenza_entry.text().upper()
         email = self.email_entry.text()
         telefono = self.telefono_entry.text()
-        data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")  # Formatta la data come '2003-01-01'
+        data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")
         codice_fiscale = self.Codice_fiscale_entry.text().upper()
         id_dipendente = self.Id_dipendente_entry.text()
 
-        # Controlla se tutti i campi sono stati compilati
+        # Controllo di tutti i campi
         if not all([nome, cognome, residenza, email, telefono, data_di_nascita, codice_fiscale, id_dipendente]):
             self.msg_box.setText("Errore: tutti i campi devono essere compilati.")
             self.msg_box.setIcon(QMessageBox.Warning)
@@ -319,8 +320,6 @@ class InserisciCliente(QMainWindow):
                 cliente = Cliente(ID,nome,cognome,data_di_nascita,residenza,codice_fiscale,email,dipendente,telefono)
                 gestore_cliente.aggiungi_cliente(cliente)
 
-
-
         except Exception as e:
             self.msg_box.setText(f"Errore durante l'inserimento del cliente: {e}")
             self.msg_box.setIcon(QMessageBox.Critical)
@@ -336,21 +335,11 @@ class InserisciCliente(QMainWindow):
         self.cognome_entry.clear() # inserire eliminazione data nascita
         self.Id_dipendente_entry.clear()
 
-
-
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
-    # All'interno della classe LoginForm
 
-    def open_home_view(self):
-        self.home_view = VistaHome()
-        self.home_view.showFullScreen()
-        self.close()
-
-
-
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     cliente = InserisciCliente()

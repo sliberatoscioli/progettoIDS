@@ -4,9 +4,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidge
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
-from Controls.gestore_vendite import GestoreVendite
-
-
 class CustomTitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -112,7 +109,7 @@ class VistaStampaStoricoCliente(QMainWindow):
         self.setWindowTitle(f"Stampa Storico Acquisti cliente ID {IdCliente}")
         self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #34495e;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Layout principale
         main_layout = QVBoxLayout()
@@ -159,7 +156,7 @@ class VistaStampaStoricoCliente(QMainWindow):
             "background-color: black; color: black; font-weight: bold;"
         )
 
-        # Aggiungi la tabella al layout principale
+        # Tabella aggiunta al layout principale
         main_layout.addWidget(self.table_widget)
 
         # Layout per il pulsante
@@ -171,7 +168,7 @@ class VistaStampaStoricoCliente(QMainWindow):
         button_font = QFont("Times New Roman", 14)
 
 
-        # Aggiungi il layout del pulsante al layout principale
+        # Layout del pulsante aggiunto al layout principale
         main_layout.addLayout(button_layout)
 
         # Widget centrale
@@ -179,7 +176,7 @@ class VistaStampaStoricoCliente(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Carica i dati dal database e popola la tabella
+        # Caricamento dei dati e popolamento della tabella
         self.load_data()
 
         # Timer per aggiornare la data e l'ora ogni secondo
@@ -188,14 +185,13 @@ class VistaStampaStoricoCliente(QMainWindow):
         self.timer.start(1000)  # Aggiorna ogni 1000 millisecondi (1 secondo)
         self.update_time()
 
+    # Metodo per il caricamento dei dati
     def load_data(self):
-        # Import necessario per gestire gli acquisti
         from Controls.gestore_vendite import GestoreVendite
 
-        # Recupera gli acquisti del cliente
+        # Recupero degli acquisti del cliente
         clienti = GestoreVendite().storico_acquisti_cliente(self.IdCliente)
 
-        # Assicurati che i dati siano stati recuperati
         if not clienti:
             # Se la lista è vuota, imposta le colonne ma non mostra alcun dato
             self.table_widget.setRowCount(0)
@@ -206,25 +202,24 @@ class VistaStampaStoricoCliente(QMainWindow):
             )
             return
 
-        # Imposta il numero di righe e colonne basato sul numero di acquisti
+        # Numero di righe e colonne basato sul numero di acquisti
         self.table_widget.setRowCount(len(clienti))
-        self.table_widget.setColumnCount(8)  # Numero corretto di colonne
+        self.table_widget.setColumnCount(8)
 
-        # Imposta le intestazioni delle colonne
+        # Intestazioni delle colonne
         self.table_widget.setHorizontalHeaderLabels(
             ["ID PRODOTTO", "MARCA", "PREZZO", "DESCRIZIONE", "TIPO PRODOTTO", "DATA ACQUISTO", "QUANTITA",
              "METODO PAGAMENTO"]
         )
 
-        # Popola la tabella con i dati degli acquisti
+        # Popolamento della tabella con i dati degli acquisti
         for row_idx, row_data in enumerate(clienti):
             for col_idx, col_data in enumerate(row_data):
-                if col_idx < 8:  # Assicurati di non superare il numero di colonne
+                if col_idx < 8:
                     item = QTableWidgetItem(str(col_data))
                     item.setBackground(Qt.darkCyan)
                     self.table_widget.setItem(row_idx, col_idx, item)
 
-        # Adatta le colonne al contenuto
         self.table_widget.resizeColumnsToContents()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
@@ -232,6 +227,7 @@ class VistaStampaStoricoCliente(QMainWindow):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     window = VistaStampaStoricoCliente()

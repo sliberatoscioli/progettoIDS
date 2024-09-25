@@ -5,11 +5,10 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushB
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
-
+from PyQt5.QtWidgets import QDateEdit
 from Attivita.dipendente import Dipendente
 from Controls.gestore_dipendenti import GestoreDipendenti
-from Viste.vista_home import VistaHome
-from PyQt5.QtWidgets import QDateEdit
+
 
 
 class CustomTitleBar(QWidget):
@@ -21,7 +20,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -116,7 +115,7 @@ class InserisciDipendente(QMainWindow):
         # Impostazioni della finestra
         self.setWindowTitle("INSERISCI DIPENDENTE")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -138,20 +137,20 @@ class InserisciDipendente(QMainWindow):
         self.datetime_label = QLabel(self)
         self.datetime_label.setFont(label_font)
         self.datetime_label.setStyleSheet("color: white;")
-        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)
         self.update_time()
 
-        # Label per il titolo "LOGIN NEW SHOPS"
+        # Label per il titolo
         title_label = QLabel("INSERISCI NUOVO DIPENDENTE", self)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white;")
-        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)
 
-        # Icona utente simulata
+        # Icona
         user_icon = QLabel("👷", self)
         user_icon.setFont(QFont("Arial", 60))
         user_icon.setStyleSheet("color: white;")
-        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)
 
         # Campo Nome
         self.nome_entry = QLineEdit(self)
@@ -193,20 +192,12 @@ class InserisciDipendente(QMainWindow):
         self.telefono_entry.setMinimumHeight(40)  # Altezza minima del campo di input
         main_layout.addWidget(self.telefono_entry)
 
-        # Campo magazzino
-        # self.magazzino_entry = QLineEdit(self)
-        # self.magazzino_entry.setFont(label_font)
-        #self.magazzino_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
-        #self.magazzino_entry.setPlaceholderText("MAGAZZINO (1/2)")
-        #self.magazzino_entry.setMinimumHeight(40)  # Altezza minima del campo di input
-        #main_layout.addWidget(self.magazzino_entry)
-
         # Campo Data di Nascita
         self.data_entry = QDateEdit(self)
         self.data_entry.setFont(label_font)
         self.data_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
-        self.data_entry.setDisplayFormat("dd/MM/yyyy")  # Formato della data
-        self.data_entry.setCalendarPopup(True)  # Abilita la selezione della data tramite un calendario
+        self.data_entry.setDisplayFormat("dd/MM/yyyy")
+        self.data_entry.setCalendarPopup(True)
         self.data_entry.setMinimumHeight(40)  # Altezza minima del campo di input
         main_layout.addWidget(self.data_entry)
 
@@ -236,7 +227,7 @@ class InserisciDipendente(QMainWindow):
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)
 
-        # Imposta il layout principale nel widget centrale
+        # Layout principale nel widget centrale
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -246,10 +237,11 @@ class InserisciDipendente(QMainWindow):
         self.datetime_label.setText(current_time)
         QTimer.singleShot(1000, self.update_time)
 
+    # Metodo che restitusce l'ultimo ID
     def _ottieni_ultimo_id(self):
         lista_dipendenti_salvata = []
 
-        # Verifica se il file Dipendenti.pkl esiste
+        # Si verifica se il file Dipendenti.pkl esiste
         if os.path.isfile('Dati/Dipendenti.pkl'):
             with open('Dati/Dipendenti.pkl', 'rb') as f:
                 lista_dipendenti_salvata = pickle.load(f)
@@ -258,18 +250,19 @@ class InserisciDipendente(QMainWindow):
         if len(lista_dipendenti_salvata) > 0:
             return max([dipendente.get_id() for dipendente in lista_dipendenti_salvata])
         else:
-            # Se non ci sono dipendenti, restituisce 0
+            # Se non ci sono dipendenti, si restituisce 0
             return 0
 
+    # Metodo che inserisce il dipendente nel file
     def enter_clicked(self):
-        #Inserisci nel file
+        #Inserimento nel file
         id = self._ottieni_ultimo_id()+1
         nome = self.nome_entry.text()
         cognome = self.cognome_entry.text()
         residenza = self.residenza_entry.text()
         email = self.email_entry.text()
         telefono = self.telefono_entry.text()
-        data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")  # Formatta la data come '2003-01-01'
+        data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")
         dipendente = Dipendente(id,nome,cognome,data_di_nascita,telefono,email,residenza)
 
         if not all([nome, cognome, residenza, email, telefono, data_di_nascita]):
@@ -297,20 +290,11 @@ class InserisciDipendente(QMainWindow):
         self.cognome_entry.clear() # inserire eliminazione data nascita
 
 
-
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
-    # All'interno della classe LoginForm
 
-    def open_home_view(self):
-        self.home_view = VistaHome()
-        self.home_view.showFullScreen()
-        self.close()
-
-
-
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     dipendente = InserisciDipendente()

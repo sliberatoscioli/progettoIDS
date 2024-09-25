@@ -5,7 +5,6 @@ import sys
 from Controls.gestore_dipendenti import GestoreDipendenti
 
 
-
 class CustomTitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -15,7 +14,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -109,7 +108,7 @@ class RimuoviDipendente(QMainWindow):
         # Impostazioni della finestra
         self.setWindowTitle("RIMUOVI DIPENDENTE TRAMITE ID")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -131,20 +130,20 @@ class RimuoviDipendente(QMainWindow):
         self.datetime_label = QLabel(self)
         self.datetime_label.setFont(label_font)
         self.datetime_label.setStyleSheet("color: white;")
-        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)
         self.update_time()
 
-        # Label per il titolo "LOGIN NEW SHOPS"
+        # Label per il titolo
         title_label = QLabel("RIMUOVI  DIPENDENTE", self)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white;")
-        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)
 
-        # Icona utente simulata
+        # Icona
         user_icon = QLabel("❌👷❌", self)
         user_icon.setFont(QFont("Arial", 60))
         user_icon.setStyleSheet("color: white;")
-        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)
 
         # Campo ID
         self.ID_entry = QLineEdit(self)
@@ -180,7 +179,7 @@ class RimuoviDipendente(QMainWindow):
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)
 
-        # Imposta il layout principale nel widget centrale
+        # Layout principale nel widget centrale
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -190,25 +189,22 @@ class RimuoviDipendente(QMainWindow):
         self.datetime_label.setText(current_time)
         QTimer.singleShot(1000, self.update_time)
 
+# Metodo che permette la rimozione del cliente
     def enter_clicked(self):
-        #Inserisci nel database
         ID = self.ID_entry.text()
-        id = int (ID)
-        gestore_Dipendenti = GestoreDipendenti()
-        gestore_Dipendenti.rimuovi_dipendenti(id)
+        id = int(ID)
+        gestore_dipendenti = GestoreDipendenti()
+        gestore_dipendenti.rimuovi_dipendenti(id)
 
 
     def reset_clicked(self):
         self.ID_entry.clear()
 
-
-
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
 
-
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     dipendente = RimuoviDipendente()

@@ -1,10 +1,8 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout
-)
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QTime, Qt
-
 
 
 class CustomTitleBar(QWidget):
@@ -16,7 +14,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -190,23 +188,23 @@ class vistaDipendente(QWidget):
 
     def go_inserisci_dipendente(self):
         from Viste.VisteDipendenti.vista_inserisci_dipendente import InserisciDipendente
-        self.dipendente = InserisciDipendente()
+        self.dipendente = InserisciDipendente()         #Collegamento alla vista_inserisci_dipendente
         self.dipendente.showFullScreen()
         self.close()
 
     def go_rimuovi_cliente(self):
         from Viste.VisteDipendenti.vista_rimuovi_dipendente import RimuoviDipendente
-        self.rimuovi_view = RimuoviDipendente()
+        self.rimuovi_view = RimuoviDipendente()         #Collegamento alla vista_rimuovi_dipendente
         self.rimuovi_view.showFullScreen()
         self.close()
 
     def go_report(self):
         from Controls.gestore_dipendenti import GestoreDipendenti
-        gestore_dipendenti = GestoreDipendenti()
+        gestore_dipendenti = GestoreDipendenti()         #Collegamento al metodo della classe gestore
         gestore_dipendenti.report_dipendenti()
     def go_home(self):
         from Viste.vista_home import VistaHome
-        self.home_view = VistaHome()
+        self.home_view = VistaHome()             #Collegamento alla vista_home
         self.home_view.showFullScreen()
         self.close()
 
@@ -217,6 +215,8 @@ class vistaDipendente(QWidget):
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
+
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     home_window = vistaDipendente()

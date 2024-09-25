@@ -1,8 +1,7 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout
-)
-from PyQt5.QtGui import QFont, QIcon
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout)
+from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QTime, Qt
 
 from Viste.VisteProdotti.vista_inserisci_prodotto import VistaInserisciProdotto
@@ -19,7 +18,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -148,11 +147,11 @@ class VistaProdotto(QWidget):
 
         self.update_clock()
 
-        # Layout a griglia con simmetria migliorata
+        # Layout a griglia
         grid_layout = QGridLayout()
         grid_layout.setSpacing(40)
 
-        # Pulsanti simmetrici con colori distinti
+        # Pulsanti simmetrici
         grid_layout.addWidget(
             self.get_colored_button("🧢👖 Inserisci Prodotto 👕👗", "#2ECC71", "#ffffff", self.go_inserisci_prodotto), 0, 0
         )
@@ -160,10 +159,10 @@ class VistaProdotto(QWidget):
             self.get_colored_button("Lista prodotti \n in magazzino 📦📄", "#E74C3C", "#ffffff", self.go_stampa_magazzino), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Ottieni info Prodotto \n Elimina prodotto 📄❌", "#9B59B6", "#ffffff", self.go_vista_ottieni_info_prodotto), 1, 0
+            self.get_colored_button("Ottieni info prodotto \n Elimina prodotto 📄❌", "#9B59B6", "#ffffff", self.go_vista_ottieni_info_prodotto), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Riassortimento Automatico\nProdotto ⚙️", "#3498DB", "#ffffff", self.go_riassortimento), 1, 1
+            self.get_colored_button("Riassortimento Automatico\nProdotto ⚙", "#3498DB", "#ffffff", self.go_riassortimento), 1, 1
         )
 
         main_layout.addLayout(grid_layout)
@@ -175,7 +174,7 @@ class VistaProdotto(QWidget):
 
     def get_colored_button(self, title, bg_color, text_color, on_click):
         button = QPushButton(title)
-        button.setFont(QFont("Times New Roman ", 20, QFont.Bold))
+        button.setFont(QFont("Times New Roman ", 30, QFont.Bold))
         button.setStyleSheet(
             f"""
             QPushButton {{
@@ -193,22 +192,22 @@ class VistaProdotto(QWidget):
         return button
 
     def go_inserisci_prodotto(self):
-        self.inserisci_prodotto_view = VistaInserisciProdotto()
+        self.inserisci_prodotto_view = VistaInserisciProdotto()      #Collegamento alla vista_inserisci_prodotto
         self.inserisci_prodotto_view.showFullScreen()
         self.close()
 
     def go_stampa_magazzino(self):
-        self.lista_prodotti_view = VistaStampaProdotti()
+        self.lista_prodotti_view = VistaStampaProdotti()          #Collegamento alla vista_stampa_prodotti
         self.lista_prodotti_view.showFullScreen()
         self.close()
 
     def go_vista_ottieni_info_prodotto(self):
-        self.ottieniProdotto = VistaOttieniInfoProdotto()
+        self.ottieniProdotto = VistaOttieniInfoProdotto()       #Collegamento alla vista_ottieni_info_prodotto
         self.ottieniProdotto.showFullScreen()
         self.close()
 
     def go_riassortimento(self):
-        self.Riassortimento_view = VistaRiassortimentoAutomatico()
+        self.Riassortimento_view = VistaRiassortimentoAutomatico()      #Collegamento alla vista_riassortimento_automatico
         self.Riassortimento_view.showFullScreen()
         self.close()
 
@@ -220,6 +219,7 @@ class VistaProdotto(QWidget):
         QMessageBox.information(self, title, message)
 
 
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     home_window = VistaProdotto()
@@ -229,4 +229,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-#COMMIT FINALE

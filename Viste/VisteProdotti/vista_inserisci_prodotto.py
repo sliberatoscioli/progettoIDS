@@ -4,8 +4,6 @@ from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
 from Attivita.prodotto import Prodotto
-import Viste.vista_home
-
 from Attivita.scatola import Scatola
 
 
@@ -18,7 +16,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -113,7 +111,7 @@ class VistaInserisciProdotto(QMainWindow):
         # Impostazioni della finestra
         self.setWindowTitle("INSERISCI PRODOTTO")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -144,7 +142,7 @@ class VistaInserisciProdotto(QMainWindow):
         title_label.setStyleSheet("color: white;")
         main_layout.addWidget(title_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
 
-        # Icona utente simulata
+        # Icona
         user_icon = QLabel("👚👖👟", self)
         user_icon.setFont(QFont("Arial", 60))
         user_icon.setStyleSheet("color: white;")
@@ -238,14 +236,14 @@ class VistaInserisciProdotto(QMainWindow):
         reset_button.clicked.connect(self.reset_clicked)
         button_layout.addWidget(reset_button)
 
-        # Aggiunta del layout dei pulsanti al layout principale
+        # Layout dei pulsanti aggiunto al layout principale
         main_layout.addLayout(button_layout)
 
         # Spazio sotto i widget principali
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)
 
-        # Imposta il layout principale nel widget centrale
+        # Layout principale nel widget centrale
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -255,6 +253,7 @@ class VistaInserisciProdotto(QMainWindow):
         self.datetime_label.setText(current_time)
         QTimer.singleShot(1000, self.update_time)
 
+    #Metodo per l'inserimento del prodotto
     def enter_clicked(self):
 
         from Controls.gestore_prodotti import GestoreProdotti
@@ -272,7 +271,7 @@ class VistaInserisciProdotto(QMainWindow):
         prodotto = Prodotto(IDScatola_prodotto,scatola,marca,taglia,colore,descrizione,tipoProdotto,giacenza,prezzo)
 
 
-        # Stampa i valori dei campi per verificarli
+        # Stampa dei valori dei campi per verificarli
         print(f"IDScatola_prodotto: {IDScatola_prodotto}")
         print(f"Taglia: {taglia}")
         print(f"Marca: {marca}")
@@ -302,7 +301,8 @@ class VistaInserisciProdotto(QMainWindow):
             self.msg_box.exec_()
             return
 
-        gestoreProdotti = GestoreProdotti().aggiungi_prodotto(prodotto)
+        gestore_prodotto = GestoreProdotti()
+        gestore_prodotto.aggiungi_prodotto(prodotto)
 
     def reset_clicked(self):
         self.taglia_entry.clear()
@@ -315,13 +315,8 @@ class VistaInserisciProdotto(QMainWindow):
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
-    def open_home_view(self):
-        self.home_view = Viste.VistaHome.VistaHome()
-        self.home_view.showFullScreen()
-        self.close()
 
-
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     prodotto = VistaInserisciProdotto()

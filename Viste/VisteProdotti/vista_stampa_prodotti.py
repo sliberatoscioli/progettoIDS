@@ -1,5 +1,4 @@
 import sys
-import sqlite3
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
     QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel
 from PyQt5.QtCore import Qt, QTimer, QDateTime
@@ -102,7 +101,6 @@ class CustomTitleBar(QWidget):
 
 
 class VistaStampaProdotti(QMainWindow):
-
     def __init__(self):
         super().__init__()
 
@@ -110,7 +108,7 @@ class VistaStampaProdotti(QMainWindow):
         self.setWindowTitle("Tabella Prodotti")
         self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #2c3e50;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Layout principale
         main_layout = QVBoxLayout()
@@ -152,7 +150,7 @@ class VistaStampaProdotti(QMainWindow):
             }
         """)
 
-        # Aggiungi la tabella al layout principale
+        # Tabella aggiunta al layout principale
         main_layout.addWidget(self.table_widget)
 
         # Layout per il pulsante
@@ -160,7 +158,7 @@ class VistaStampaProdotti(QMainWindow):
         button_layout.setContentsMargins(0, 50, 0, 0)  # Margini sopra il pulsante
         button_layout.setSpacing(10)
 
-        # Aggiungi il layout del pulsante al layout principale
+        # Layout del pulsante aggiunto al layout principale
         main_layout.addLayout(button_layout)
 
         # Widget centrale
@@ -168,21 +166,22 @@ class VistaStampaProdotti(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Carica i dati dal database e popola la tabella
+        # Caricamento dei dati e popolamento della tabella
         self.load_data()
 
         # Timer per aggiornare la data e l'ora ogni secondo
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_time)
-        self.timer.start(1000)  # Aggiorna ogni 1000 millisecondi (1 secondo)
+        self.timer.start(1000)  # Aggiorna ogni 1000 millisecondi
         self.update_time()
 
+    # Metodo per caricare i dati da stampare
     def load_data(self):
         # Richiesta della lista prodotti
         from Controls.gestore_prodotti import GestoreProdotti
         prodotti = GestoreProdotti().ritorna_lista_prodotti()
 
-        # Assicurati che i dati siano stati recuperati
+        # Si verifica che i dati siano stati recuperati
         if not prodotti:
             self.table_widget.setRowCount(0)
             self.table_widget.setColumnCount(11)
@@ -191,21 +190,21 @@ class VistaStampaProdotti(QMainWindow):
                  "GIACENZA", "ID SCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO"])
             return
 
-        # Imposta il numero di righe e colonne
+        # Numero di righe e colonne
         self.table_widget.setRowCount(len(prodotti))
         self.table_widget.setColumnCount(11)
 
-        # Imposta le intestazioni delle colonne
+        # Intestazioni delle colonne
         self.table_widget.setHorizontalHeaderLabels(
             ["ID PRODOTTO", "MARCA", "COLORE", "PREZZO", "TAGLIA", "DESCRIZIONE\nPRODOTTO", "TIPO\nPRODOTTO",
              "GIACENZA", "ID SCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO"])
 
-        # Centrare le intestazioni
+        # Intestazioni centrate
         self.table_widget.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
 
-        # Popola la tabella con i dati
+        # Popolamento della tabella con i dati
         for row_idx, prodotto in enumerate(prodotti):
-            scatola = prodotto.get_scatola()  # Ottieni la scatola associata al prodotto
+            scatola = prodotto.get_scatola()  # Scatola associata al prodotto
 
             self.table_widget.setItem(row_idx, 0, QTableWidgetItem(str(prodotto.get_id_prodotto())))
             self.table_widget.setItem(row_idx, 1, QTableWidgetItem(prodotto.get_marca()))
@@ -221,7 +220,7 @@ class VistaStampaProdotti(QMainWindow):
             self.table_widget.setItem(row_idx, 9, QTableWidgetItem(scatola.get_descrizione_scatola()))
             self.table_widget.setItem(row_idx, 10, QTableWidgetItem(str(scatola.get_magazzino_scatola())))
 
-        # Ottimizza la visualizzazione della tabella
+        # Visualizzazione della tabella
         self.table_widget.resizeColumnsToContents()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
@@ -229,6 +228,7 @@ class VistaStampaProdotti(QMainWindow):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     window = VistaStampaProdotti()

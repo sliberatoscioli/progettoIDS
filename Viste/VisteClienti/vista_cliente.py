@@ -16,7 +16,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -190,25 +190,25 @@ class VistaCliente(QWidget):
 
     def go_inserisci_cliente(self):
         from Viste.VisteClienti.vista_inserisci_cliente import InserisciCliente
-        self.cliente = InserisciCliente()
+        self.cliente = InserisciCliente()          #Collegamento alla vista_inserosci_cliente
         self.cliente.showFullScreen()
         self.close()
 
     def go_ricerca_cliente(self):
         from Viste.VisteClienti.vista_rimuovi_cliente import RimuoviCliente
-        self.rimuovi_view = RimuoviCliente()
+        self.rimuovi_view = RimuoviCliente()        #Collegamento alla vista_rimuovi_cliente
         self.rimuovi_view.showFullScreen()
         self.close()
 
     def go_stampa_clienti(self):
         from Viste.VisteClienti.vista_stampa_clienti import VistaStampaClienti
-        self.stampa_clienti_view = VistaStampaClienti()
+        self.stampa_clienti_view = VistaStampaClienti()         #Collegamento alla vista_srampa_clienti
         self.stampa_clienti_view.showFullScreen()
         self.close()
 
     def go_home(self):
         from Viste.vista_home import VistaHome
-        self.home_view = VistaHome()
+        self.home_view = VistaHome()            #Collegamento alla vista_home
         self.home_view.showFullScreen()
         self.close()
 
@@ -219,6 +219,7 @@ class VistaCliente(QWidget):
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     home_window = VistaCliente()
@@ -227,7 +228,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-#COMMIT FINALE
-
-#COMMIT FINALE

@@ -1,6 +1,5 @@
 import sys
 from functools import partial
-
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
     QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel
 from PyQt5.QtCore import Qt, QTimer, QDateTime
@@ -111,7 +110,7 @@ class VistaRiassortimentoAutomatico(QMainWindow):
         self.setWindowTitle("Tabella Prodotti")
         self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #2c3e50;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione il bordo della finestra
 
         # Layout principale
         main_layout = QVBoxLayout()
@@ -153,7 +152,7 @@ class VistaRiassortimentoAutomatico(QMainWindow):
             }
         """)
 
-        # Aggiungi la tabella al layout principale
+        # Tabella aggiunta al layout principale
         main_layout.addWidget(self.table_widget)
 
         # Layout per il pulsante
@@ -161,7 +160,7 @@ class VistaRiassortimentoAutomatico(QMainWindow):
         button_layout.setContentsMargins(0, 50, 0, 0)  # Margini sopra il pulsante
         button_layout.setSpacing(10)
 
-        # Aggiungi il layout del pulsante al layout principale
+        # Layout del pulsante aggiunto al layout principale
         main_layout.addLayout(button_layout)
 
         # Widget centrale
@@ -169,7 +168,7 @@ class VistaRiassortimentoAutomatico(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Carica i dati dal database e popola la tabella
+        # Caricamento dei dati e popolamento la tabella
         self.load_data()
 
         # Timer per aggiornare la data e l'ora ogni secondo
@@ -179,41 +178,40 @@ class VistaRiassortimentoAutomatico(QMainWindow):
         self.update_time()
 
     def load_data(self):
-        # Connessione al database SQLite
         from Controls.gestore_prodotti import GestoreProdotti
         prodottoPK = GestoreProdotti()
 
         # Recupera i prodotti con giacenza critica
         prodotti_critici = prodottoPK.ritorna_prodotto_giacenza_critica()
 
-        # Assicurati che i dati siano stati recuperati
+        # Si verifica se i dati siano stati recuperati
         if not prodotti_critici:
             self.table_widget.setRowCount(0)
-            self.table_widget.setColumnCount(12)  # Imposta il numero corretto di colonne
+            self.table_widget.setColumnCount(12)
             self.table_widget.setHorizontalHeaderLabels(
                 ["ID PRODOTTO", "MARCA", "COLORE", "PREZZO", "TAGLIA", "DESCRIZIONE\nPRODOTTO", "TIPO\nPRODOTTO",
                  "GIACENZA",
                  "ID SCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO", "AZIONE"])
             return
 
-        # Imposta il numero di righe e colonne
+        # Numero di righe e colonne
         self.table_widget.setRowCount(len(prodotti_critici))
-        self.table_widget.setColumnCount(12)  # Imposta il numero corretto di colonne
+        self.table_widget.setColumnCount(12)
 
-        # Imposta le intestazioni delle colonne
+        # Intestazioni delle colonne
         self.table_widget.setHorizontalHeaderLabels(
             ["ID PRODOTTO", "MARCA", "COLORE", "PREZZO", "TAGLIA", "DESCRIZIONE\nPRODOTTO", "TIPO\nPRODOTTO",
              "GIACENZA",
              "ID SCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO", "AZIONE"])
 
-        # Centrare le intestazioni
+        # Intestazioni centrate
         self.table_widget.horizontalHeader().setDefaultAlignment(Qt.AlignCenter)
 
-        # Popola la tabella con i dati dei prodotti critici
+        # Popolamento della tabella con i dati dei prodotti critici
         for row_idx, prodotto in enumerate(prodotti_critici):
-            scatola = prodotto.get_scatola()  # Recupera l'oggetto scatola associato al prodotto
+            scatola = prodotto.get_scatola()  # Recupero dell'oggetto scatola associato al prodotto
 
-            # Popola le celle della tabella
+            # Popolamento delle celle della tabella
             self.table_widget.setItem(row_idx, 0, QTableWidgetItem(str(prodotto.get_id_prodotto())))
             self.table_widget.setItem(row_idx, 1, QTableWidgetItem(prodotto.get_marca()))
             self.table_widget.setItem(row_idx, 2, QTableWidgetItem(prodotto.get_colore()))
@@ -226,13 +224,12 @@ class VistaRiassortimentoAutomatico(QMainWindow):
             self.table_widget.setItem(row_idx, 9, QTableWidgetItem(scatola.get_descrizione_scatola()))
             self.table_widget.setItem(row_idx, 10, QTableWidgetItem(str(scatola.get_magazzino_scatola())))
 
-            # Crea il pulsante di azione
+            # Creazione del pulsante di azione
             action_button = QPushButton("Riassortimento Automatico")
             action_button.setStyleSheet("background-color: #00FF00; color: #000000; font-weight: bold;")
-            action_button.clicked.connect(partial(self.perform_action1, prodotto.get_id_prodotto()))
+            action_button.clicked.connect(partial(self.esegui_riassortimento, prodotto.get_id_prodotto()))
             self.table_widget.setCellWidget(row_idx, 11, action_button)
 
-        # Ridimensiona le colonne e adatta l'ultima colonna
         self.table_widget.resizeColumnsToContents()
         self.table_widget.horizontalHeader().setStretchLastSection(True)
 
@@ -240,21 +237,22 @@ class VistaRiassortimentoAutomatico(QMainWindow):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
-    def perform_action1(self, row_idx):
+    # Metodo per eseguire il riassortimento
+    def esegui_riassortimento(self, row_idx):
         from Controls.gestore_prodotti import GestoreProdotti
         print(row_idx)
 
-        # Chiama il metodo per eseguire il riassortimento automatico
+        # Chiamata al metodo per eseguire il riassortimento automatico
         GestoreProdotti().riassortimento_automatico(row_idx)
 
-        # Trova la riga nella tabella corrispondente all'ID prodotto (row_idx)
+        # Ricerca la riga nella tabella corrispondente all'ID prodotto (row_idx)
         for row in range(self.table_widget.rowCount()):
             item = self.table_widget.item(row, 0)
             if item and int(item.text()) == row_idx:
                 self.table_widget.removeRow(row)
-                break  # Esce dal ciclo dopo aver rimosso la riga
+                break  # Uscita dal ciclo dopo aver rimosso la riga
 
-
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     window = VistaRiassortimentoAutomatico()
