@@ -3,7 +3,6 @@ from PyQt5.QtCore import QTimer, QDateTime, Qt
 from PyQt5.QtGui import QFont
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, \
     QHBoxLayout, QSpacerItem, QSizePolicy, QMessageBox, QGroupBox, QRadioButton
-from Attivita.acquisto import Acquisto
 
 class CustomTitleBar(QWidget):
     def __init__(self, parent=None):
@@ -108,7 +107,7 @@ class VistaCaricaWallet(QMainWindow):
         # Impostazioni della finestra
         self.setWindowTitle("CARICA WALLET")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 30, QFont.Bold)
@@ -261,21 +260,22 @@ class VistaCaricaWallet(QMainWindow):
         self.cash_radio.setChecked(False)
         self.credit_card_radio.setChecked(False)
 
+    # Metodo che rimanda alla vista_inserisci_cliente
     def open_nuovo_cliente(self):
         from Viste.VisteClienti.vista_inserisci_cliente import InserisciCliente
         self.inserisci_cliente_view = InserisciCliente()
-        self.inserisci_cliente_view.resize(500, 600)  # Imposta la dimensione della finestra ridotta
+        self.inserisci_cliente_view.resize(500, 600)  # Dimensione della finestra ridotta
         self.inserisci_cliente_view.show()
-
 
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
+    # Metodo per il caricamento dei dati
     def load_data(self, telefonoCliente_cercato, importo, metodo_pagamento):
         from Controls.gestore_clienti import GestoreClienti
         GestoreClienti().carica_wallet(telefonoCliente_cercato,importo,metodo_pagamento)
 
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     caricaWallet = VistaCaricaWallet()

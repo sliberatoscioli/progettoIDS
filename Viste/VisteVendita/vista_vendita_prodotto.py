@@ -7,7 +7,6 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidge
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
-
 class CustomTitleBar(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -108,15 +107,13 @@ class VistaVenditaProdotto(QMainWindow):
 
     def __init__(self):
         super().__init__()
-
         # Impostazioni della finestra
         self.setWindowTitle("Tabella Prodotto")
         self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #2c3e50;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
         self.prezzoSconto = 0.0
-        # Layout principale
-        main_layout = QVBoxLayout()
+        main_layout = QVBoxLayout()     # Layout principale
 
         # Barra del titolo personalizzata con pulsanti
         self.title_bar = CustomTitleBar(self)
@@ -151,7 +148,7 @@ class VistaVenditaProdotto(QMainWindow):
         self.quantity_entry.setFont(label_font)
         self.quantity_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
         self.quantity_entry.setPlaceholderText("Inserisci Quantità")
-        self.quantity_entry.setMinimumHeight(40)
+        self.quantity_entry.setMinimumHeight(40)   # Altezza minima del pulsante
         form_layout.addWidget(self.quantity_entry)
 
         # Bottone invio
@@ -184,7 +181,7 @@ class VistaVenditaProdotto(QMainWindow):
             }
         """)
 
-        # Aggiungi la tabella al layout principale
+        # Tabella aggiunta al layout principale
         main_layout.addWidget(self.table_widget)
 
         # Form per numero di telefono del cliente
@@ -197,7 +194,7 @@ class VistaVenditaProdotto(QMainWindow):
         self.telefono_cliente_entry.setMinimumHeight(40)
         form_layout2.addWidget(self.telefono_cliente_entry)
 
-        # Bottone per salvare informazioni aggiuntive
+        # Bottone per salvataggio delle informazioni aggiuntive
         save_button = QPushButton("ACQUISTA", self)
         save_button.setFont(button_font)
         save_button.setStyleSheet("color: white; background-color: green;")
@@ -214,7 +211,7 @@ class VistaVenditaProdotto(QMainWindow):
         self.total_cost_label.setAlignment(Qt.AlignRight)
         main_layout.addWidget(self.total_cost_label)
 
-        # Aggiungi il gruppo di bottoni radio per il metodo di pagamento
+        # Bottoni radio per il metodo di pagamento
         payment_group_box = QGroupBox("TIPO PAGAMENTO")
         payment_group_box.setFont(label_font)
         payment_group_box.setStyleSheet("color: white;")
@@ -243,7 +240,7 @@ class VistaVenditaProdotto(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Timer per aggiornare la data e l'ora ogni secondo
+        # Timer per aggiornare la data e l'ora istantaneamente
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_time)
         self.timer.start(1000)  # Aggiorna ogni 1000 millisecondi (1 secondo)
@@ -260,7 +257,7 @@ class VistaVenditaProdotto(QMainWindow):
         discount_group_box.setStyleSheet("color: white;")
         discount_layout = QVBoxLayout()
 
-        # Radio Button per lo sconto
+        # Bottoni radio per lo sconto
         discount_group_box = QGroupBox("APPLICA SCONTO")
         discount_group_box.setFont(label_font)
         discount_group_box.setStyleSheet("color: white;")
@@ -269,44 +266,45 @@ class VistaVenditaProdotto(QMainWindow):
         self.discount_none_radio = QRadioButton("Nessuno")
         self.discount_none_radio.setFont(label_font)
         self.discount_none_radio.setStyleSheet("color: white;")
-        self.discount_none_radio.setChecked(True)  # Default to "Nessuno"
-        self.discount_none_radio.toggled.connect(self.apply_discount)
+        self.discount_none_radio.setChecked(True)  # "Nessuno" impostato come defualt
+        self.discount_none_radio.toggled.connect(self.applica_sconto)
         discount_layout.addWidget(self.discount_none_radio)
 
         self.discount_10_radio = QRadioButton("10% SCONTO")
         self.discount_10_radio.setFont(label_font)
         self.discount_10_radio.setStyleSheet("color: white;")
-        self.discount_10_radio.toggled.connect(self.apply_discount)
+        self.discount_10_radio.toggled.connect(self.applica_sconto)
         discount_layout.addWidget(self.discount_10_radio)
 
         self.discount_20_radio = QRadioButton("20% SCONTO")
         self.discount_20_radio.setFont(label_font)
         self.discount_20_radio.setStyleSheet("color: white;")
-        self.discount_20_radio.toggled.connect(self.apply_discount)
+        self.discount_20_radio.toggled.connect(self.applica_sconto)
         discount_layout.addWidget(self.discount_20_radio)
 
         self.discount_30_radio = QRadioButton("30% SCONTO")
         self.discount_30_radio.setFont(label_font)
         self.discount_30_radio.setStyleSheet("color: white;")
-        self.discount_30_radio.toggled.connect(self.apply_discount)
+        self.discount_30_radio.toggled.connect(self.applica_sconto)
         discount_layout.addWidget(self.discount_30_radio)
 
         self.discount_40_radio = QRadioButton("40% SCONTO")
         self.discount_40_radio.setFont(label_font)
         self.discount_40_radio.setStyleSheet("color: white;")
-        self.discount_40_radio.toggled.connect(self.apply_discount)
+        self.discount_40_radio.toggled.connect(self.applica_sconto)
         discount_layout.addWidget(self.discount_40_radio)
 
         self.discount_50_radio = QRadioButton("50% SCONTO")
         self.discount_50_radio.setFont(label_font)
         self.discount_50_radio.setStyleSheet("color: white;")
-        self.discount_50_radio.toggled.connect(self.apply_discount)
+        self.discount_50_radio.toggled.connect(self.applica_sconto)
         discount_layout.addWidget(self.discount_50_radio)
 
         discount_group_box.setLayout(discount_layout)
         main_layout.addWidget(discount_group_box)
 
-    def apply_discount(self):
+    # Metodo per l'applicazione dello sconto
+    def applica_sconto(self):
         if self.discount_none_radio.isChecked():
             discount = 0.0
         elif self.discount_10_radio.isChecked():
@@ -320,7 +318,7 @@ class VistaVenditaProdotto(QMainWindow):
         elif self.discount_50_radio.isChecked():
             discount = 0.50
 
-        # Calculate the discounted total cost
+        # Calcolo del prezzo totale scontato
         discounted_total = self.total_cost * (1 - discount)
         self.total_cost_label.setText(f"Spesa Totale: €{discounted_total:.2f}")
         self.prezzoSconto = discounted_total
@@ -329,7 +327,7 @@ class VistaVenditaProdotto(QMainWindow):
         id_prodotto = self.id_entry.text().strip()
         quantity = self.quantity_entry.text().strip()
 
-        # Controllo se i campi sono vuoti
+        # Controllo dei campi
         if not id_prodotto or not quantity:
             QMessageBox.warning(self, "Campi obbligatori", "Per favore, riempi tutti i campi prima di procedere.")
             return
@@ -345,57 +343,55 @@ class VistaVenditaProdotto(QMainWindow):
             self.id_entry.setStyleSheet("color: red; background-color: #1a1a1a;")
             self.id_entry.setPlaceholderText("Inserisci un ID e una quantità validi")
 
+    # Metodo per verificare la disponibiltà del prodotto
     def check_stock_and_load_data(self, id_prodotto_cercato, quantity):
         from Controls.gestore_prodotti import GestoreProdotti
         prodotto_PK = GestoreProdotti()
         prodotti = prodotto_PK.ritorna_prodotto_ID(id_prodotto_cercato)
 
-
         if not prodotti:
-            # Se non ci sono risultati, non fare nulla
             QMessageBox.warning(self, "Prodotto non trovato", "Il prodotto con l'ID inserito non esiste.")
             return
 
         giacenza = prodotti.get_giacenza()
 
         if quantity > int(giacenza):
-            # Mostra un messaggio di errore se la quantità richiesta è maggiore della giacenza
+            # Messaggio di errore
             QMessageBox.warning(self, "Quantità non disponibile",
                                 f"La quantità richiesta ({quantity}) è maggiore della giacenza disponibile ({giacenza}).")
             return
 
         self.load_data(id_prodotto_cercato, quantity)
 
+    # Metodo per il caricamento dei prodotti
     def load_data(self, id_prodotto_cercato, quantity):
-        # Ricavo il prodotto tramite ID
+        # Ricerca del prodotto tramite ID
         from Controls.gestore_prodotti import GestoreProdotti
         prodotto_PK = GestoreProdotti()
         prodotto = prodotto_PK.ritorna_prodotto_ID(id_prodotto_cercato)
 
         if not prodotto:
-            # Se non ci sono risultati, non fare nulla
-            return
+            return   #Risultati non trovati
 
-        # Ricava la scatola associata al prodotto
-        scatola = prodotto.get_scatola()
+        scatola = prodotto.get_scatola()    # Scatola associata al prodotto
 
         prodotto_tuple = (
-            prodotto.get_id_prodotto(),  # ID
-            prodotto.get_marca(),  # Marca
-            prodotto.get_colore(),  # Colore
-            prodotto.get_prezzo(),  # Prezzo
-            prodotto.get_taglia(),  # Taglia
-            prodotto.get_descrizione(),  # Descrizione
-            prodotto.get_tipo_prodotto(),  # Tipo prodotto
-            prodotto.get_giacenza(),  # Giacenza
-            scatola.get_IDscatola(),  # ID Scatola
-            scatola.get_descrizione_scatola(),  # Descrizione scatola
-            scatola.get_magazzino_scatola()  # ID Magazzino
+            prodotto.get_id_prodotto(),
+            prodotto.get_marca(),
+            prodotto.get_colore(),
+            prodotto.get_prezzo(),
+            prodotto.get_taglia(),
+            prodotto.get_descrizione(),
+            prodotto.get_tipo_prodotto(),
+            prodotto.get_giacenza(),
+            scatola.get_IDscatola(),
+            scatola.get_descrizione_scatola(),
+            scatola.get_magazzino_scatola()
         )
 
         # Se la tabella è vuota, imposta le intestazioni delle colonne
         if self.table_widget.rowCount() == 0:
-            self.table_widget.setColumnCount(13)  # Imposta il numero corretto di colonne (inclusa la colonna Quantità)
+            self.table_widget.setColumnCount(13)  # impostazione del numero di colonne
             self.table_widget.setHorizontalHeaderLabels(
                 ["ID PRODOTTO", "MARCA", "COLORE", "PREZZO", "TAGLIA", "DESCRIZIONE\nPRODOTTO", "TIPO\nPRODOTTO",
                  "GIACENZA", "IDSCATOLA", "DESCRIZIONE\nSCATOLA", "ID MAGAZZINO", "QUANTITÀ",
@@ -403,25 +399,25 @@ class VistaVenditaProdotto(QMainWindow):
 
         product_id = prodotto_tuple[0]
 
-        # Se il prodotto è già presente nella tabella, aggiorna la quantità
+        # Se il prodotto è già presente nella tabella, aggiornamento della quantità
         if product_id in self.product_row_map:
             row = self.product_row_map[product_id]
             current_quantity = int(
-                self.table_widget.item(row, 11).text())  # Supponiamo che la quantità sia nella colonna 11
+                self.table_widget.item(row, 11).text())
             quantity += current_quantity
-            self.table_widget.item(row, 11).setText(str(quantity))  # Aggiorna la quantità
+            self.table_widget.item(row, 11).setText(str(quantity))
             # Aggiorna il costo totale
             self.total_cost += float(prodotto_tuple[3]) * (
-                        quantity - current_quantity)  # Solo l'aggiunta della nuova quantità
+                        quantity - current_quantity)  #
             self.update_total_cost()
             return
 
-        # Aggiungi nuovo prodotto alla tabella
+        # Aggiunta di un nuovo prodotto alla tabella
         row_idx = self.table_widget.rowCount()
         self.table_widget.insertRow(row_idx)
 
         for col_idx, col_data in enumerate(prodotto_tuple):
-            if col_idx < 12:  # Assicurati di non superare il numero di colonne
+            if col_idx < 12:
                 item = QTableWidgetItem(str(col_data))
                 item.setBackground(Qt.darkCyan)
                 self.table_widget.setItem(row_idx, col_idx, item)
@@ -432,17 +428,17 @@ class VistaVenditaProdotto(QMainWindow):
 
         action_button = QPushButton("ELIMINA PRODOTTO")
         action_button.setStyleSheet("background-color: red; color: white; font-weight: bold;")
-        action_button.clicked.connect(partial(self.perform_action1, product_id, row_idx, quantity))
+        action_button.clicked.connect(partial(self.rimuovi_riga, product_id, row_idx, quantity))
         self.table_widget.setCellWidget(row_idx, 12, action_button)
 
         # Mappa l'ID prodotto all'indice di riga e prezzo
         self.product_row_map[product_id] = row_idx
-        self.product_price_map[product_id] = float(prodotto_tuple[3])  # Prezzo del prodotto
+        self.product_price_map[product_id] = float(prodotto_tuple[3])
 
-        # Aggiorna la spesa totale
+        # Aggiornamento del valore totale
         self.total_cost += float(prodotto_tuple[3]) * quantity
 
-        # Aggiorna la visualizzazione della spesa totale
+        # Visualizzazione del costo totale
         self.update_total_cost()
 
         self.table_widget.resizeColumnsToContents()
@@ -452,11 +448,11 @@ class VistaVenditaProdotto(QMainWindow):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
-    def perform_action1(self, product_id, row_idx, quantity):
-        # Rimuovi la riga dalla tabella
+    # Metodo per rimuovere la riga dalla tabella
+    def rimuovi_riga(self, product_id, row_idx, quantity):
         self.table_widget.removeRow(row_idx)
 
-        # Rimuovi la mappatura dell'ID prodotto
+        # Rimozione della mappatura dell'ID prodotto
         if product_id in self.product_row_map:
             del self.product_row_map[product_id]
             # Sottrai il prezzo del prodotto dalla spesa totale
@@ -464,13 +460,14 @@ class VistaVenditaProdotto(QMainWindow):
             # Rimuovi il prezzo dal dizionario
             del self.product_price_map[product_id]
 
-        # Aggiorna la visualizzazione della spesa totale
+        # Aggiornamento della spesa totale
         self.update_total_cost()
 
+    # Metodo per il salvataggio delle informazioni
     def save_info(self):
         # Controllo dei campi obbligatori
         telefono_cliente = self.telefono_cliente_entry.text().strip()
-        metodo_pagamento = self.get_selected_payment_method()
+        metodo_pagamento = self.seleziona_metodo_pagamento()
 
         if not telefono_cliente:
             QMessageBox.warning(self, "Campo obbligatorio", "Inserisci il numero di telefono del cliente.")
@@ -480,14 +477,13 @@ class VistaVenditaProdotto(QMainWindow):
             QMessageBox.warning(self, "Metodo di pagamento obbligatorio", "Seleziona un metodo di pagamento.")
             return
 
-        # Controllo che il numero di telefono sia composto solo da cifre
+        # Controllo affiché il numero di telefono sia composto solo da cifre
         if not telefono_cliente.isdigit():
             QMessageBox.warning(self, "Errore", "Il numero di telefono deve contenere solo cifre.")
             return
 
 
         from Attivita.acquisto import Acquisto
-        from Attivita.cliente import Cliente
         from Controls.gestore_vendite import GestoreVendite
         from Controls.gestore_clienti import GestoreClienti
         from Controls.gestore_prodotti import GestoreProdotti  # Importa il gestore dei prodotti
@@ -495,8 +491,7 @@ class VistaVenditaProdotto(QMainWindow):
         cliente = GestoreClienti().cerca_per_telefono(telefono_cliente)
 
 
-        if not cliente :
-            #QMessageBox.warning(self, "Cliente non trovato", "Nessun cliente trovato con il numero di telefono fornito.")
+        if not cliente :   #Cliente non trovato
             return
 
         saldo_wallet = cliente[0].get_saldo_wallet()
@@ -517,16 +512,16 @@ class VistaVenditaProdotto(QMainWindow):
         for row in range(self.table_widget.rowCount()):
             id_prodotto = self.table_widget.item(row, 0).text()
             try:
-                quantita = int(self.table_widget.item(row, 11).text())  # Quantità dalla tabella
+                quantita = int(self.table_widget.item(row, 11).text())
             except ValueError:
                 QMessageBox.warning(self, "Errore",
                                     f"La quantità '{self.table_widget.item(row, 11).text()}' non è valida. Inserisci un numero intero.")
                 return
 
-            prodotto = GestoreProdotti().ritorna_prodotto_ID(id_prodotto)  # Recupera il prodotto
+            prodotto = GestoreProdotti().ritorna_prodotto_ID(id_prodotto)  # Recupero del prodotto
 
             if prodotto:
-                # Aggiungi il prodotto all'elenco
+                # Aggiunta del prodotto all'elenco
                 prodotto.set_quantita(quantita)
                 prodotti.append(prodotto)
             else:
@@ -537,14 +532,14 @@ class VistaVenditaProdotto(QMainWindow):
             QMessageBox.warning(self, "Errore", f"Inserire dei prodotti da acquistare.")
             return
 
-        # Ora che abbiamo tutti i prodotti, creiamo l'oggetto Acquisto
+        # Creazione dell'oggetto Acquisto
         id = GestoreVendite().ritorna_ultimo_ID_acquisto() + 1
         acquisto = Acquisto(id,cliente[0],prodotti,datetime.now().strftime("%Y-%m-%d %H:%M:%S"),metodo_pagamento,codice)
 
         #Salvataggio acquisti nel gestore vendite
-        GestoreVendite().aggiungi_acquisto(acquisto) #Memorizza l'acquisto nel file
+        GestoreVendite().aggiungi_acquisto(acquisto) #Memorizzazione dell'acquisto nel file
         prezzo_scontato_formattato = f"€{self.prezzoSconto:.2f}"
-        GestoreVendite().CreaScontrinoAcquisto(prodotti,prezzo_scontato_formattato,acquisto.get_codice_vendita()) #crea lo scontrino fiscale
+        GestoreVendite().CreaScontrinoAcquisto(prodotti,prezzo_scontato_formattato,acquisto.get_codice_vendita()) #creazione dello scontrino fiscale
         GestoreProdotti().aggiorna_prodotti(prodotti)
         if metodo_pagamento == "SALDO WALLET":
             if self.prezzoSconto != 0:
@@ -552,7 +547,8 @@ class VistaVenditaProdotto(QMainWindow):
             else:
                 GestoreClienti().carica_wallet(telefono_cliente, -self.total_cost, metodo_pagamento)
 
-    def get_selected_payment_method(self):
+    # Metodo per la selezione della modalità di pagamento
+    def seleziona_metodo_pagamento(self):
         if self.cash_radio.isChecked():
             return "CONTANTI"
         elif self.credit_card_radio.isChecked():
@@ -565,15 +561,13 @@ class VistaVenditaProdotto(QMainWindow):
         self.total_cost_label.setText(f"Spesa Totale: €{self.total_cost:.2f}")
 
 
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     window = VistaVenditaProdotto()
     window.showFullScreen()
     sys.exit(app.exec_())
 
-
 if __name__ == "__main__":
     main()
-
-#ULTIMA MODIFICA
 

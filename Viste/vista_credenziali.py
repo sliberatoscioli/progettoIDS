@@ -1,11 +1,8 @@
-import os
-import pickle
-
 from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QVBoxLayout, QWidget, QHBoxLayout, QSpacerItem, QSizePolicy, QMessageBox
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
-
+from Controls.gestore_sistema import GestoreBackup
 from Viste.vista_home import VistaHome
 
 class CustomTitleBar(QWidget):
@@ -17,7 +14,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -66,7 +63,7 @@ class CustomTitleBar(QWidget):
         maximize_button.clicked.connect(self.toggle_maximize_restore)
         layout.addWidget(maximize_button)
 
-        back_button = QPushButton("🏠")
+        back_button = QPushButton("👤")
         back_button.setFixedSize(30, 30)
         back_button.setStyleSheet("""
             QPushButton {
@@ -98,22 +95,23 @@ class CustomTitleBar(QWidget):
         self.is_maximized = not self.is_maximized
 
     def go_back(self):
-        from Viste.vista_home import VistaHome
-        self.home_view = VistaHome()
+        from Viste.vista_login import LoginForm
+        self.home_view = LoginForm()
         self.home_view.showFullScreen()
         self.close_window()
 
 
 
 class VistaCredenziali(QMainWindow):
-    def __init__(self):
+    def __init__(self,credenziali):
         super().__init__()
 
+        self.credenziali = credenziali
         self.msg_box = QMessageBox()  # Inizializzazione della QMessageBox
         # Impostazioni della finestra
         self.setWindowTitle("REIMPOSTA CREDENZIALI")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -135,20 +133,20 @@ class VistaCredenziali(QMainWindow):
         self.datetime_label = QLabel(self)
         self.datetime_label.setFont(label_font)
         self.datetime_label.setStyleSheet("color: white;")
-        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)
         self.update_time()
 
         # Label per il titolo "LOGIN NEW SHOPS"
         title_label = QLabel("REIMPOSTA CREDENZIALI", self)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white;")
-        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)
 
-        # Icona utente simulata
+        # Icona
         user_icon = QLabel("🔑", self)
         user_icon.setFont(QFont("Arial", 60))
         user_icon.setStyleSheet("color: white;")
-        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)
 
         #Campo username precedente
         self.oldusername_entry = QLineEdit(self)
@@ -208,7 +206,7 @@ class VistaCredenziali(QMainWindow):
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)
 
-        # Imposta il layout principale nel widget centrale
+        # Layout principale nel widget centrale
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -219,19 +217,26 @@ class VistaCredenziali(QMainWindow):
         QTimer.singleShot(1000, self.update_time)
 
     def enter_clicked(self):
-
-        # Recupera i dati dalle entry e assicurati che non siano vuoti
+        # Recupero dei dati dalle entry
         old_username = self.oldusername_entry.text()
         new_username = self.newusername_entry.text()
         old_password = self.oldpassword_entry.text()
         new_password = self.newpassword_entry.text()
+        username_db,password_db = self.credenziali[0]
 
-        # Controlla se tutti i campi sono stati compilati
+        # Controllo di tutti i campi (se sono compilati)
         if not all([old_username, new_username, old_password, new_password]):
             self.msg_box.setText("Errore: tutti i campi devono essere compilati.")
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.exec_()
             return
+
+        if old_username == username_db and old_password == password_db:
+            GestoreBackup().modifica_username_password(new_username,new_password)
+        else:
+            self.msg_box.setText("Errore: Username o password sbagliati")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
 
     def reset_clicked(self):
         self.oldusername_entry.clear()
@@ -239,11 +244,8 @@ class VistaCredenziali(QMainWindow):
         self.oldpassword_entry.clear()
         self.newpassword_entry.clear()
 
-
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
-
-    # All'interno della classe LoginForm
 
     def open_home_view(self):
         self.home_view = VistaHome()
@@ -251,8 +253,7 @@ class VistaCredenziali(QMainWindow):
         self.close()
 
 
-
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     cliente = VistaCredenziali()

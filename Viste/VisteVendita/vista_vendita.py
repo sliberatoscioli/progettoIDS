@@ -1,8 +1,6 @@
 import sys
-from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox,
-    QGridLayout
-)
+from PyQt5.QtWidgets import (QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem,
+                             QSizePolicy, QPushButton, QLabel, QMessageBox,QGridLayout)
 from PyQt5.QtGui import QFont, QIcon
 from PyQt5.QtCore import QTimer, QTime, Qt
 from Viste.VisteVendita.vista_carica_wallet import VistaCaricaWallet
@@ -152,20 +150,20 @@ class VistaVendita(QWidget):
         grid_layout = QGridLayout()
         grid_layout.setSpacing(40)
 
-        # Pulsanti simmetrici con colori distinti
+        # Pulsanti simmetrici
         grid_layout.addWidget(
-            self.get_colored_button("Vendita Prodotti 👛🏷️", "#28a745", "#ffffff", self.go_venditaProdotti), 0, 0
+            self.get_colored_button("Vendita Prodotti 👛🏷️", "#FFB703", "#ffffff", self.go_venditaProdotti), 0, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Reso Prodotti 📦🔄", "#e74c3c", "#ffffff",
+            self.get_colored_button("Reso Prodotti 📦🔄", "#FF6F61", "#ffffff",
                                     self.go_resoProdotti), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Carica Wallet 📁↩️", "#9b59b6", "#ffffff",
+            self.get_colored_button("Carica Wallet 📁↩", "#00B4D8", "#ffffff",
                                     self.go_caricaWallet), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Riepilogo Giornaliero 📝📈", "#3498db", "#ffffff",
+            self.get_colored_button("Riepilogo Giornaliero 📝📈", "#9AE66E", "#ffffff",
                                     self.go_riepilogoGiornaliero), 1, 1
         )
 
@@ -196,22 +194,22 @@ class VistaVendita(QWidget):
         return button
 
     def go_venditaProdotti(self):
-        self.venditaProdotti = VistaVenditaProdotto()
+        self.venditaProdotti = VistaVenditaProdotto()       #Collegamento alla vista_vendita_prodotto
         self.venditaProdotti.showFullScreen()
         self.close()
 
     def go_resoProdotti(self):
-        self.reso = VistaResoProdotto()
+        self.reso = VistaResoProdotto()     #Collegamento alla vista_reso_prodotto
         self.reso.showFullScreen()
         self.close()
 
     def go_caricaWallet(self):
-        self.caricaWallet_view = VistaCaricaWallet()
+        self.caricaWallet_view = VistaCaricaWallet()        #Collegamento alla vista_carica_wallet
         self.caricaWallet_view.showFullScreen()
         self.close()
 
     def go_riepilogoGiornaliero(self):
-        self.riepilogo_view = VistaRiepilogoGiornaliero()
+        self.riepilogo_view = VistaRiepilogoGiornaliero()    #Collegamento alla vista riepilogo_giornaliero
         self.riepilogo_view.showFullScreen()
         self.close()
 
@@ -223,6 +221,7 @@ class VistaVendita(QWidget):
         QMessageBox.information(self, title, message)
 
 
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     home_window = VistaVendita()

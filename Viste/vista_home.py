@@ -1,13 +1,12 @@
 import sys
 from PyQt5.QtWidgets import (
-    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout
-)
+    QApplication, QWidget, QVBoxLayout, QHBoxLayout, QSpacerItem, QSizePolicy, QPushButton, QLabel, QMessageBox, QGridLayout)
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QTime, Qt
 
 from Viste.VisteClienti.vista_cliente import VistaCliente
 from Viste.VisteDipendenti.vista_dipendente import vistaDipendente
-import Viste.VisteProdotti.vista_prodotto
+from Viste.VisteProdotti.vista_prodotto import VistaProdotto
 from Viste.VisteVendita.vista_vendita import VistaVendita
 
 
@@ -20,7 +19,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -89,19 +88,9 @@ class VistaHome(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        # Adattamento automatico allo stile del sistema operativo
-        QApplication.setStyle("Fusion")  # Usa Fusion per compatibilità cross-platform
-        QApplication.setAttribute(Qt.AA_EnableHighDpiScaling)
-        QApplication.setAttribute(Qt.AA_UseHighDpiPixmaps)
-
         self.setWindowTitle("Gestore Negozio")
         self.setStyleSheet("background-color: black;")
-
-        # Rileva macOS per disabilitare la finestra senza bordi
-        if sys.platform == 'darwin':  # macOS
-            self.setWindowFlags(Qt.Window)  # Usa il bordo di default su macOS
-        else:
-            self.setWindowFlags(Qt.FramelessWindowHint)  # Nessun bordo su altri sistemi
+        self.setWindowFlags(Qt.FramelessWindowHint)
 
         header_font = QFont("Times New Roman", 30, QFont.Bold)
         clock_font = QFont("Times New Roman", 24)
@@ -139,7 +128,7 @@ class VistaHome(QWidget):
         self.update_clock()
 
         grid_layout = QGridLayout()
-        grid_layout.setSpacing(30)
+        grid_layout.setSpacing(40)
 
         grid_layout.addWidget(
             self.get_colored_button("Gestore Clienti 🧑‍💼", "#4CAF50", "#ffffff", self.go_vista_clienti), 0, 0
@@ -154,7 +143,7 @@ class VistaHome(QWidget):
             self.get_colored_button("Gestore Vendite 🛒", "#6A00FF", "#ffffff", self.go_vendita), 1, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Backup 💾", "#FF8C00", "#ffffff", self.go_backup), 2, 0, 1 ,2
+            self.get_colored_button("Backup 💾", "#FF8C00", "#ffffff", self.go_backup), 2, 0, 1, 2
         )
 
         main_layout.addLayout(grid_layout)
@@ -166,47 +155,45 @@ class VistaHome(QWidget):
 
     def get_colored_button(self, title, bg_color, text_color, on_click):
         button = QPushButton(title)
-        button.setFont(QFont("Times New Roman", 23, QFont.Bold))
+        button.setFont(QFont("Times New Roman", 30, QFont.Bold))
         button.setStyleSheet(
             f"""
             QPushButton {{
                 background-color: {bg_color};
                 color: {text_color};
-                border-radius: 100px;
-                padding: 100px;
+                border-radius: 80px;
+                padding: 80px;
             }}
             QPushButton:hover {{
                 opacity: 0.8;
             }}
             """
         )
-        # Assicura che i pulsanti si adattino a diverse risoluzioni
-        button.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         button.clicked.connect(on_click)
         return button
 
     def go_vista_clienti(self):
-        self.clienti_window = VistaCliente()
-        self.clienti_window.showFullScreen()  # Mostra la finestra a schermo intero
+        self.clienti_window = VistaCliente()     #Collegamento alla vista clienti
+        self.clienti_window.showFullScreen()
         self.close()
 
     def go_magazzino(self):
-        self.prodotti_window = Viste.VisteProdotti.vista_prodotto.VistaProdotto()
-        self.prodotti_window.showFullScreen()  # Mostra la finestra a schermo intero
+        self.prodotti_window = VistaProdotto()     #Collegamento alla vista prodotti
+        self.prodotti_window.showFullScreen()
         self.close()
 
     def go_dipendenti(self):
-        self.dipendenti_window = vistaDipendente()
-        self.dipendenti_window.showFullScreen()  # Mostra la finestra a schermo intero
+        self.dipendenti_window = vistaDipendente()   #Collegamento alla vista dipendenti
+        self.dipendenti_window.showFullScreen()
         self.close()
 
     def go_vendita(self):
-        self.vendita_window = VistaVendita()
+        self.vendita_window = VistaVendita()   #Collegamento alla vista vendita
         self.vendita_window.showFullScreen()
         self.close()
 
     def go_backup(self):
-        from Controls.gestore_sistema import GestoreBackup
+        from Controls.gestore_sistema import GestoreBackup      #Collegamento alla vista backup
         effettua_backup = GestoreBackup()
         effettua_backup.backup()
 
@@ -217,13 +204,13 @@ class VistaHome(QWidget):
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
 
-
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     home_window = VistaHome()
     home_window.show()
     sys.exit(app.exec_())
 
-
 if __name__ == '__main__':
     main()
+

@@ -1,6 +1,6 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
-    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
+                             QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel)
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
@@ -109,7 +109,7 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         self.setWindowTitle("Riepilogo Totale Giornaliero")
         self.setGeometry(100, 100, 1000, 800)
         self.setStyleSheet("background-color: #2c3e50;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Layout principale
         main_layout = QVBoxLayout()
@@ -119,7 +119,7 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         main_layout.addWidget(self.title_bar)
 
         # Titolo della finestra
-        self.title_label = QLabel("Riepilogo totale Giornaliero 🛍️☀️", self)
+        self.title_label = QLabel("Riepilogo totale Giornaliero 🛍️️", self)
         self.title_label.setFont(QFont("Arial", 20, QFont.Bold))
         self.title_label.setStyleSheet("color: #ecf0f1;")
         self.title_label.setAlignment(Qt.AlignCenter)
@@ -215,7 +215,6 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
 
-        # Carica i dati dal database e popola le tabelle
         self.load_data()
 
         # Timer per aggiornare la data e l'ora ogni secondo
@@ -224,15 +223,16 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         self.timer.start(1000)  # Aggiorna ogni 1000 millisecondi (1 secondo)
         self.update_time()
 
+    # Metodo per il caricamento dei dati
     def load_data(self):
         from Controls.gestore_vendite import GestoreVendite
         riepilogo = GestoreVendite()
         info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_per_categoria = riepilogo.riepilogo_giornaliero()
 
-        # Assicurati che i dati siano stati recuperati
+        # Si verifica se i dati sono caricati correttamente
         if info is None:
             self.user_table.setRowCount(0)
-            self.user_table.setColumnCount(14)  # Imposta il numero corretto di colonne
+            self.user_table.setColumnCount(14)
             self.user_table.setHorizontalHeaderLabels(
                 ["NOME", "COGNOME", "EMAIL", "TELEFONO", "SALDO WALLET", "MARCA", "TAGLIA", "COLORE",
                  "PREZZO", "TIPO PRODOTTO", "DESCRIZIONE", "DATA ACQUISTO", "QUANTITA\nACQUISTATA", "METODO PAGAMENTO"])
@@ -271,19 +271,19 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         self.category_table.resizeColumnsToContents()
         self.category_table.horizontalHeader().setStretchLastSection(True)
 
-        # Aggiorna le etichette dei totali
+        # Aggiornamento delle etichette dei totali
         self.credit_card_total_label.setText(f"1) Totale con Carta di Credito: €{totale_carta_di_credito:.2f}")
         self.cash_total_label.setText(f"2) Totale in Contanti: €{totale_contanti:.2f}")
         self.wallet_total_label.setText(f"3) Totale Saldi Wallet: €{totale_saldo_wallet:.2f}")
         grand_total = totale_carta_di_credito + totale_contanti + totale_saldo_wallet
         self.grand_total_label.setText(f"4) Totale Complessivo: €{grand_total:.2f}")
 
-
+    # Metodo per aggiornare la data in tempo reale
     def update_time(self):
         current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd HH:mm:ss")
         self.datetime_label.setText(f"Data e Ora: {current_time}")
 
-
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     window = VistaRiepilogoGiornaliero()

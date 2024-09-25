@@ -9,4 +9,3 @@ if __name__ == "__main__":
     login_form = LoginForm()  # Crea un'istanza di LoginForm
     login_form.showFullScreen()  # Mostra la finestra in modalità a schermo intero
     sys.exit(app.exec_())  # Avvia il loop dell'applicazione
-#COMMIT FINALE

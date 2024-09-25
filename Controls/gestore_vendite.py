@@ -25,7 +25,7 @@ class GestoreVendite:
                 self.msg_box.exec_()
                 return []
 
-            # Carica i prodotti dal file pickle
+            # Caricamento dei prodotti dal file pickle
             with open(self.file_path, 'rb') as file:
                 acquisti = pickle.load(file)
 
@@ -52,11 +52,11 @@ class GestoreVendite:
 
     # Metodo per l'aggiunta di un acquisto
     def aggiungi_acquisto(self, acquisto):
-        # Verifica se la cartella "Dati" esiste, altrimenti la crea
+        # Si verifica se la cartella "Dati" esiste, altrimenti viene creata
         if not os.path.exists('Dati'):
             os.makedirs('Dati')
 
-        # Carica gli acquisti esistenti dal file pickle, se esiste
+        # Caricamento degli acquisti esistenti dal file pickle
         if os.path.exists(self.file_path):
             try:
                 with open(self.file_path, 'rb') as file:
@@ -74,10 +74,10 @@ class GestoreVendite:
             self.msg_box.exec_()
             return
 
-        # Aggiungi il nuovo acquisto alla lista
+        # Aggiunta del nuovo acquisto alla lista
         self.lista_acquisti.append(acquisto)
 
-        # Salva la lista aggiornata nel file pickle
+        # Salvataggio della lista aggiornata nel file pickle
         try:
             with open(self.file_path, 'wb') as file:
                 pickle.dump(self.lista_acquisti, file)
@@ -87,7 +87,7 @@ class GestoreVendite:
             self.msg_box.exec_()
             return
 
-        # Mostra il messaggio di conferma
+        # Messaggio di conferma
         self.msg_box.setText(f"Acquisto con ID {acquisto.get_id()} aggiunto con successo.")
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
@@ -96,10 +96,9 @@ class GestoreVendite:
     def ritorna_ultimo_ID_acquisto(self):
         acquisti = self.ritorna_lista_acquisti()
         if not acquisti:
-            # Se la lista è vuota, restituisci 0 come ID predefinito
-            return 0
+            return 0    #Se la lista è vuota, ID impostato a 0
 
-        # Trova l'ID massimo tra tutti i prodotti
+        # Ricerca dell'ID massimo tra tutti i prodotti
         ultimo_id = max(acquisto.get_id() for acquisto in acquisti)
         return ultimo_id
 
@@ -107,7 +106,7 @@ class GestoreVendite:
     def creaScontrinoWallet(self, telefono, importo, metodoPagamento):
         # Determina il percorso del desktop dell'utente
         desktop_path = os.path.join(os.path.expanduser("~"), "Desktop")
-        # Crea la cartella 'Scontrino_wallet' sul desktop
+        # Creazione della cartella 'Scontrino_wallet' sul desktop
         cartella_wallet = os.path.join(desktop_path, 'Scontrino_wallet')
         if not os.path.exists(cartella_wallet):
             os.makedirs(cartella_wallet)
@@ -116,37 +115,37 @@ class GestoreVendite:
         nome_file = f'Scontrino_{telefono}.pdf'
         percorso_file = os.path.join(cartella_wallet, nome_file)
 
-        larghezza_scontrino = 250  # Larghezza aumentata del PDF (circa 100 mm)
-        altezza_scontrino = 500  # Altezza aumentata, può essere adattata
+        larghezza_scontrino = 250  # Larghezza aumentata del PDF
+        altezza_scontrino = 500  # Altezza aumentata
 
-        # Crea il PDF usando ReportLab con le dimensioni personalizzate
+        # Creazione del PDF usando ReportLab con le dimensioni personalizzate
         c = canvas.Canvas(percorso_file, pagesize=(larghezza_scontrino, altezza_scontrino))
         c.setFont("Helvetica-Bold", 16)
 
-        # Scrivi il titolo del PDF
+        # Titolo del PDF
         c.drawString(10, altezza_scontrino - 30, "Ricarica Wallet")
 
-        # Aggiungi una linea di separazione
+        # Linea di separazione
         c.setLineWidth(0.5)
         c.line(10, altezza_scontrino - 40, larghezza_scontrino - 10,
                altezza_scontrino - 40)  # Linea orizzontale sotto il titolo
 
-        # Imposta il font per le altre informazioni
+        # Font per le altre informazioni
         c.setFont("Helvetica", 12)
 
         # Data e ora della ricarica
         data_ora = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         c.drawString(10, altezza_scontrino - 60, f"Data e Ora: {data_ora}")
 
-        # Aggiungi una linea di separazione sotto la data
+        # Linea di separazione sotto la data
         c.line(10, altezza_scontrino - 70, larghezza_scontrino - 10, altezza_scontrino - 70)
 
-        # Scrivi le informazioni sul PDF
+        # Informazioni sul PDF
         c.drawString(10, altezza_scontrino - 90, f"Telefono: {telefono}")
         c.drawString(10, altezza_scontrino - 110, f"Importo: {importo} €")
         c.drawString(10, altezza_scontrino - 130, f"Metodo di Pagamento: {metodoPagamento}")
 
-        # Aggiungi una linea di separazione finale
+        # Linea di separazione finale
         c.line(10, altezza_scontrino - 140, larghezza_scontrino - 10, altezza_scontrino - 140)
 
         # Chiudi e salva il PDF
@@ -173,7 +172,7 @@ class GestoreVendite:
         percorso_file = os.path.join(cartella_scontrino, nome_file)
 
         # Dimensioni del scontrino
-        larghezza_scontrino = 250  # Larghezza del PDF (circa 100 mm)
+        larghezza_scontrino = 250  # Larghezza del PDF
         altezza_scontrino = 500  # Altezza del PDF
 
         # Creazione del canvas per il PDF
@@ -254,22 +253,21 @@ class GestoreVendite:
         lista_acquisti_cliente = []
         lista_acquisti = self.ritorna_lista_acquisti()
 
-        # Itera sugli acquisti
+        # Iterazione sugli acquisti
         for acquisto in lista_acquisti:
             if acquisto.get_cliente().get_id_cliente() == ID_cliente:
-                # Ottieni i prodotti associati all'acquisto
                 prodotti = acquisto.get_prodotti()
                 for prodotto in prodotti:
-                    # Estrai le informazioni richieste e crea una tupla
+                    # Estrazione delle informazioni richieste in una tupla
                     info_acquisto = (
-                        prodotto.get_id_prodotto(),  # ID Prodotto
-                        prodotto.get_marca(),  # Marca
-                        prodotto.get_prezzo(),  # Prezzo
-                        prodotto.get_descrizione(),  # Descrizione
-                        prodotto.get_tipo_prodotto(),  # Tipo prodotto
-                        acquisto.get_data_acquisto(),  # Data acquisto
-                        prodotto.get_quantita(),  # Quantità
-                        acquisto.get_metodo_pagamento()  # Metodo di pagamento
+                        prodotto.get_id_prodotto(),
+                        prodotto.get_marca(),
+                        prodotto.get_prezzo(),
+                        prodotto.get_descrizione(),
+                        prodotto.get_tipo_prodotto(),
+                        acquisto.get_data_acquisto(),
+                        prodotto.get_quantita(),
+                        acquisto.get_metodo_pagamento()
                     )
                     lista_acquisti_cliente.append(info_acquisto)
 
@@ -282,14 +280,14 @@ class GestoreVendite:
 
         for acquisto in lista_acquisti:
             if acquisto.get_codice_vendita() == codice_acquisto:
-                # Ottieni le informazioni rilevanti dall'acquisto
+                # Estrazione delle informazioni rilevanti dall'acquisto
                 id_acquisto = acquisto.get_id()
                 id_cliente = acquisto.get_cliente().get_id_cliente()
                 data_acquisto = acquisto.get_data_acquisto()
                 metodo_pagamento = acquisto.get_metodo_pagamento()
                 codice_vendita = acquisto.get_codice_vendita()
 
-                # Estrai informazioni da ogni prodotto nell'acquisto
+                # Estrazione delle informazioni da ogni prodotto nell'acquisto
                 for prodotto in acquisto.get_prodotti():
                     id_prodotto = prodotto.get_id_prodotto()
                     quantita = prodotto.get_quantita()
@@ -298,7 +296,7 @@ class GestoreVendite:
                     prezzo = prodotto.get_prezzo()
                     descrizione = prodotto.get_descrizione()
 
-                    # Crea la tupla con tutte le informazioni
+                    # Creazione di una tupla con tutte le informazioni
                     acquisto_tuple = (
                         id_acquisto,
                         id_cliente,
@@ -313,7 +311,6 @@ class GestoreVendite:
                         descrizione
                     )
 
-                    # Aggiungi la tupla alla lista dei risultati
                     lista_acquisti_ritorna.append(acquisto_tuple)
         return lista_acquisti_ritorna
 
@@ -324,7 +321,7 @@ class GestoreVendite:
         percorso_file_acquisti = os.path.join('Dati', 'Acquisti.pkl')
         percorso_file_prodotti = os.path.join('Dati', 'Prodotti.pkl')
 
-        # Carica i dati dai file
+        # Caricamento dei dati dai file
         with open(percorso_file_clienti, 'rb') as file_clienti:
             lista_clienti = pickle.load(file_clienti)
 
@@ -335,7 +332,7 @@ class GestoreVendite:
             lista_prodotti = pickle.load(file_prodotti)
 
 
-        # Trova il cliente per aggiornare il saldo del wallet
+        # Ricerca del cliente per aggiornare il saldo del wallet
         cliente_trovato = None
         for cliente in lista_clienti:
             if cliente.get_id_cliente() == id_cliente:
@@ -343,11 +340,11 @@ class GestoreVendite:
                 break
 
         if cliente_trovato:
-            # Calcola il credito da restituire
+            # Calcolo del credito da restituire
             wallet_cliente = cliente_trovato.get_saldo_wallet()
             prezzo_wallet = wallet_cliente+quantita * prezzo
             try:
-                # Aggiorna il saldo del wallet del cliente
+                # Aggiornamento del saldo
                 cliente_trovato.set_saldo_wallet(prezzo_wallet)
             except ValueError as e:
                 self.msg_box.setText(f"Errore durante l'aggiornamento del wallet: {e}")
@@ -355,7 +352,7 @@ class GestoreVendite:
                 self.msg_box.exec_()
                 return  # Interrompe l'operazione in caso di errore
 
-        # Trova l'acquisto corrispondente al codice vendita e rimuovi il prodotto
+        # Ricerca dell'acquisto corrispondente al codice vendita e rimozione del prodotto
         acquisto_trovato = None
         for acquisto in lista_acquisti:
             if acquisto.get_codice_vendita() == codice_vendita:
@@ -363,13 +360,13 @@ class GestoreVendite:
                 break
 
         if acquisto_trovato:
-            # Rimuovi il prodotto dall'acquisto
+            # Rimozione del prodotto dall'acquisto
             acquisto_trovato.get_prodotti().remove(
                 next(prodotto for prodotto in acquisto_trovato.get_prodotti() if
                      prodotto.get_id_prodotto() == id_prodotto)
             )
 
-        # Trova il prodotto e aggiorna la giacenza
+        # Ricerca del prodotto e aggiornamento delle giacenza
         prodotto_trovato = None
         for prodotto in lista_prodotti:
             if prodotto.get_id_prodotto() == id_prodotto:
@@ -380,7 +377,7 @@ class GestoreVendite:
             nuova_giacenza = prodotto_trovato.get_giacenza() + quantita
             prodotto_trovato.aggiorna_giacenza(nuova_giacenza)
 
-        # Salva i dati aggiornati nei file
+        # Salvataggio dei dati aggiornati nei file
         with open(percorso_file_clienti, 'wb') as file_clienti:
             pickle.dump(lista_clienti, file_clienti)
 
@@ -390,15 +387,14 @@ class GestoreVendite:
         with open(percorso_file_prodotti, 'wb') as file_prodotti:
             pickle.dump(lista_prodotti, file_prodotti)
 
-        # Notifica l'utente che l'operazione è avvenuta con successo
         self.msg_box.setText("Reso del prodotto avvenuto con successo.")
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
 
     # Metodo per il riepilogo giornaliero delle vendite
     def riepilogo_giornaliero(self):
-        lista_acquisti = self.ritorna_lista_acquisti()  # Prelevo tutti gli acquisti nel file
-        oggi = datetime.now().date()  # Ottieni la data odierna
+        lista_acquisti = self.ritorna_lista_acquisti()
+        oggi = datetime.now().date()  #data odierna
 
         try:
             with open('Dati/Clienti.pkl', 'rb') as file:
@@ -414,14 +410,14 @@ class GestoreVendite:
 
         for acquisto in lista_acquisti:
             try:
-                # Recupera la data di acquisto come stringa
+                # Recupero della data di acquisto come stringa
                 data_acquisto_completa = acquisto.get_data_acquisto()
                 # Conversione della stringa in un oggetto datetime
                 data_acquisto_completa = datetime.strptime(data_acquisto_completa, "%Y-%m-%d %H:%M:%S")
-                # Ottieni solo giorno, mese e anno
+                # Considera solo giorno, mese e anno
                 data_solo_giorno_mese_anno = data_acquisto_completa.date()
 
-                # Confronta solo le date
+                # Confronto tra le date
                 if data_solo_giorno_mese_anno == oggi:
                     for prodotto in acquisto.get_prodotti():
                         quantita = prodotto.get_quantita()
@@ -452,7 +448,7 @@ class GestoreVendite:
             except Exception as e:
                 print("Errore durante il processamento dell'acquisto:", e)
 
-        # Crea una lista delle quantità totali per tipo di prodotto
+        # Creazione di una lista delle quantità totali per tipo di prodotto
         quantita_totale_per_tipo = [(tipo, quantita) for tipo, quantita in quantita_per_tipo.items()]
         self.crea_pdf_riassunto_giornaliero(info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo)
         return info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo
@@ -464,7 +460,7 @@ class GestoreVendite:
         desktop_path = os.path.join(os.path.expanduser('~'), 'Desktop')
         cartella_riepiloghi = os.path.join(desktop_path, 'Riepiloghi_giornalieri')
 
-        # Crea la cartella se non esiste
+        # Creazione della cartella se non esiste
         if not os.path.exists(cartella_riepiloghi):
             os.makedirs(cartella_riepiloghi)
 
@@ -509,7 +505,7 @@ class GestoreVendite:
             metodo_pagamento = info[13]
             table_data.append([cliente, prodotto, quantita, prezzo, metodo_pagamento])
 
-        # Crea la tabella delle informazioni
+        # Creazione della tabella delle informazioni
         table = Table(table_data)
         table.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
@@ -522,11 +518,11 @@ class GestoreVendite:
             ('GRID', (0, 0), (-1, -1), 0.5, colors.black)
         ]))
 
-        # Riduci la distanza tra tabelle
+        # Riduzione della distanza tra tabelle
         table.wrapOn(c, width - 2 * margin, height - 5 * margin)
         table.drawOn(c, margin, height - 5 * margin - len(table_data) * 16)
 
-        # Calcola l'altezza corrente per la posizione successiva
+        # Calcolo dell'altezza corrente per la posizione successiva
         current_height = height - 5 * margin - len(table_data) * 16
 
         # Totale incassi
@@ -542,7 +538,7 @@ class GestoreVendite:
             ["TOTALE COMPLESSIVO", f"{totale_complessivo:.2f} €"]
         ]
 
-        # Crea la tabella dei totali (bianco e nero)
+        # Creazione della tabella dei totali (bianco e nero)
         table_incassi = Table(table_data_incassi)
         table_incassi.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
@@ -568,7 +564,7 @@ class GestoreVendite:
         for vendita in vendite_per_tipo:
             table_data_vendite.append([vendita[0], vendita[1]])
 
-        # Crea la tabella delle vendite per tipo (bianco e nero)
+        # Creazione della tabella delle vendite per tipo (bianco e nero)
         table_vendite = Table(table_data_vendite)
         table_vendite.setStyle(TableStyle([
             ('BACKGROUND', (0, 0), (-1, 0), colors.black),
@@ -585,12 +581,11 @@ class GestoreVendite:
         table_vendite.wrapOn(c, width - 2 * margin, height - 2 * margin)
         table_vendite.drawOn(c, margin, current_height)
 
-        # Aggiungi una linea di "=" alla fine del PDF
+        # Linea di "=" alla fine del PDF
         current_height -= 2 * margin
         c.setFont("Times-Roman", 12)
         c.drawString(margin, current_height, "=" * num_equals)
 
-        # Finalizza il PDF
         c.showPage()
         c.save()
         self.msg_box.setText(f"Riepilogo giornaliero in PDF generato con successo: {pdf_path}")

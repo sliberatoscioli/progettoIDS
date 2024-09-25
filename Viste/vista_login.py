@@ -2,6 +2,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushB
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
+from Controls.gestore_sistema import GestoreBackup
 from Viste.vista_home import VistaHome
 
 
@@ -14,7 +15,7 @@ class CustomTitleBar(QWidget):
 
         layout.addItem(QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum))
 
-        # Pulsanti della barra del titolo con stile raffinato
+        # Pulsanti della barra del titolo
         close_button = QPushButton("✕")
         close_button.setFixedSize(30, 30)
         close_button.setStyleSheet("""
@@ -63,8 +64,6 @@ class CustomTitleBar(QWidget):
         maximize_button.clicked.connect(self.toggle_maximize_restore)
         layout.addWidget(maximize_button)
 
-
-
         self.is_maximized = False
 
     def close_window(self):
@@ -83,11 +82,11 @@ class CustomTitleBar(QWidget):
 class LoginForm(QMainWindow):
     def __init__(self):
         super().__init__()
-
+        self.credenziali = GestoreBackup().preleva_username_password()
         # Impostazioni della finestra
         self.setWindowTitle("New Shops Login")
         self.setStyleSheet("background-color: black;")
-        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimuove il bordo della finestra
+        self.setWindowFlags(Qt.FramelessWindowHint)  # Rimozione del bordo della finestra
 
         # Font personalizzati
         title_font = QFont("Arial", 20, QFont.Bold)
@@ -109,20 +108,20 @@ class LoginForm(QMainWindow):
         self.datetime_label = QLabel(self)
         self.datetime_label.setFont(label_font)
         self.datetime_label.setStyleSheet("color: white;")
-        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)
         self.update_time()
 
         # Label per il titolo "LOGIN NEW SHOPS"
         title_label = QLabel("LOGIN NEW SHOPS", self)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white;")
-        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(title_label, alignment=Qt.AlignCenter)
 
-        # Icona utente simulata
+        # Icona utente
         user_icon = QLabel("👤", self)
         user_icon.setFont(QFont("Arial", 60))
         user_icon.setStyleSheet("color: white;")
-        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)  # Qt.AlignCenter
+        main_layout.addWidget(user_icon, alignment=Qt.AlignCenter)
 
         # Campo Username
         self.username_entry = QLineEdit(self)
@@ -163,19 +162,19 @@ class LoginForm(QMainWindow):
         # Aggiunta del layout dei pulsanti al layout principale
         main_layout.addLayout(button_layout)
 
-        # Pulsante "Reimposta Credenziali" sotto i pulsanti Enter e Reset
+        # Pulsante "Reimposta Credenziali"
         nuove_credenziali_button = QPushButton("REIMPOSTA CREDENZIALI", self)
         nuove_credenziali_button.setFont(button_font)
         nuove_credenziali_button.setStyleSheet("color: white; background-color: green;")
         nuove_credenziali_button.setMinimumHeight(50)
-        nuove_credenziali_button.clicked.connect(self.open_new_credenziali)  # Collega il pulsante al metodo
+        nuove_credenziali_button.clicked.connect(self.open_new_credenziali)  # Collegamento del pulsante al metodo
         main_layout.addWidget(nuove_credenziali_button)
 
         # Spazio sotto i widget principali
         spacer_bottom = QSpacerItem(20, 40, QSizePolicy.Minimum, QSizePolicy.Expanding)
         main_layout.addItem(spacer_bottom)
 
-        # Imposta il layout principale nel widget centrale
+        # Layout principale nel widget centrale
         central_widget = QWidget(self)
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
@@ -188,9 +187,10 @@ class LoginForm(QMainWindow):
     def enter_clicked(self):
         username = self.username_entry.text()
         password = self.password_entry.text()
+        username_db , password_db = self.credenziali[0]
 
         # Verifica delle credenziali
-        if username == "admin" and password == "admin":
+        if username == username_db and password == password_db:
             self.open_home_view()
         else:
             self.show_message("Username o password errati!", "Username e password errati!")
@@ -199,22 +199,21 @@ class LoginForm(QMainWindow):
         self.username_entry.clear()
         self.password_entry.clear()
 
+    # Metodo per aprire la schermata per la modifica delle credenziali
     def open_new_credenziali(self):
         from Viste.vista_credenziali import VistaCredenziali
-        self.new_credenziali_view = VistaCredenziali()
-        self.new_credenziali_view.resize(500, 600)  # Imposta la dimensione della finestra ridotta
+        self.new_credenziali_view = VistaCredenziali(self.credenziali)
         self.new_credenziali_view.show()
+        self.new_credenziali_view.showFullScreen()
+        self.close()
 
     def show_message(self, title, message):
         msg_box = QMessageBox(self)
         msg_box.setWindowTitle(title)
         msg_box.setText(message)
         msg_box.setIcon(QMessageBox.Information)
-        # Apply custom style to QMessageBox (text color set to white)
         msg_box.setStyleSheet("QLabel { color: white; }")
-        # Display the message box
         msg_box.exec_()
-    # All'interno della classe LoginForm
 
     def open_home_view(self):
         self.home_view = VistaHome()
@@ -222,7 +221,7 @@ class LoginForm(QMainWindow):
         self.close()
 
 
-# Funzione principale per avviare l'applicazione
+# Metodo principale per avviare l'applicazione
 def main():
     app = QApplication(sys.argv)
     login = LoginForm()
@@ -231,4 +230,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-#COMMIT FINALE

@@ -114,7 +114,7 @@ class GestoreClienti:
         title_style = ParagraphStyle(name='TitleStyle', fontName='Helvetica-Bold', fontSize=18, alignment=1)
         client_info_style = ParagraphStyle(name='ClientInfoStyle', fontName='Helvetica', fontSize=12)
 
-        # Aggiungi un titolo al documento
+        # Aggiunta del titolo al documento
         title = Paragraph("Lista Clienti", title_style)
         elements.append(title)
         elements.append(Spacer(1, 50))  # Spazio sotto il titolo
@@ -135,7 +135,7 @@ class GestoreClienti:
                 f"<b>Saldo Wallet:</b> € {cliente.get_saldo_wallet():.2f}<br/>"
             )
 
-            # Aggiungi le informazioni del cliente come testo
+            # Aggiunta delle informazioni del cliente come testo
             client_paragraph = Paragraph(client_info, client_info_style)
             elements.append(client_paragraph)
             elements.append(Spacer(1, 24))  # Spazio tra i clienti
@@ -182,11 +182,11 @@ class GestoreClienti:
             self.msg_box.exec_()
             return
 
-        # Salva la lista aggiornata nel file pickle
+        # Salvataggio della lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)
 
-        # Mostra il messaggio di conferma
+        # Messaggio di conferma
         self.msg_box.setText(f"Cliente con numero di telefono {search_text} rimosso con successo.")
         self.msg_box.setIcon(QMessageBox.Information)
         self.msg_box.exec_()
@@ -277,12 +277,12 @@ class GestoreClienti:
             self.msg_box.exec_()
             return
 
-        # Aggiungi la ricarica al saldo attuale
+        # Aggiunta della ricarica al saldo attuale
         nuovo_saldo = cliente_trovato.get_saldo_wallet() + ricarica
         cliente_trovato.set_saldo_wallet(nuovo_saldo)
 
         try:
-            # Salva la lista aggiornata nel file pickle
+            # Salvataggio della lista aggiornata nel file pickle
             with open(self.file_path, 'wb') as file:
                 pickle.dump(lista_clienti, file)
 
@@ -297,5 +297,5 @@ class GestoreClienti:
             self.msg_box.setIcon(QMessageBox.Critical)
             self.msg_box.exec_()
 
-        # richiamare metodo crea scontrino saldo_wallet
+        # Metodo crea scontrino saldo_wallet
         Scontrino = GestoreVendite().creaScontrinoWallet(telefono,ricarica,metodo_pagamento)
