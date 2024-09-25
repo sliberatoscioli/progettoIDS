@@ -2,7 +2,7 @@
 
 import sys
 from PyQt5.QtWidgets import QApplication
-from Viste.vista_login import LoginForm  # Assicurati che il nome della classe sia corretto
+from Viste.vista_login import LoginForm
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
