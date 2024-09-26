@@ -2,7 +2,7 @@ class Acquisto:
 
     def __init__(self, id, cliente, prodotti, data_acquisto, metodo_pagamento, codice_vendita):
         self.id = id
-        self.cliente = cliente  # Questo sarà un oggetto di tipo Cliente
+        self.cliente = cliente  #Oggetto di tipo Cliente
         self.prodotti = prodotti  # Una lista di oggetti Prodotto
         self.data_acquisto = data_acquisto
         self.metodo_pagamento = metodo_pagamento
