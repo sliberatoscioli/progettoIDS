@@ -9,7 +9,6 @@ import sys
 from Attivita.cliente import Cliente
 from Controls.gestore_clienti import GestoreClienti
 from Controls.gestore_dipendenti import GestoreDipendenti
-from Viste.vista_home import VistaHome
 from PyQt5.QtWidgets import QDateEdit
 
 
