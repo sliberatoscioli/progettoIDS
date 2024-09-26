@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushB
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
-from Controls.gestore_sistema import GestoreBackup
+from Controls.gestore_sistema import GestoreSistema
 from Viste.vista_home import VistaHome
 
 
@@ -82,7 +82,7 @@ class CustomTitleBar(QWidget):
 class LoginForm(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.credenziali = GestoreBackup().preleva_username_password()
+        self.credenziali = GestoreSistema().preleva_username_password()
         # Impostazioni della finestra
         self.setWindowTitle("New Shops Login")
         self.setStyleSheet("background-color: black;")

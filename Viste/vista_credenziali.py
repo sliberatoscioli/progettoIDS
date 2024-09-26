@@ -2,7 +2,7 @@ from PyQt5.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushB
 from PyQt5.QtGui import QFont
 from PyQt5.QtCore import QTimer, QDateTime, Qt
 import sys
-from Controls.gestore_sistema import GestoreBackup
+from Controls.gestore_sistema import GestoreSistema
 from Viste.vista_home import VistaHome
 
 class CustomTitleBar(QWidget):
@@ -232,7 +232,7 @@ class VistaCredenziali(QMainWindow):
             return
 
         if old_username == username_db and old_password == password_db:
-            GestoreBackup().modifica_username_password(new_username,new_password)
+            GestoreSistema().modifica_username_password(new_username,new_password)
         else:
             self.msg_box.setText("Errore: Username o password sbagliati")
             self.msg_box.setIcon(QMessageBox.Warning)

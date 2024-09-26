@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QMessageBox
 import os
 import shutil
 
-class GestoreBackup:
+class GestoreSistema:
     def __init__(self):
         # Determina il percorso del desktop dell'utente
         self.percorso_desktop = os.path.join(os.path.expanduser("~"), "Desktop") # Determina il percorso del desktop dell'utente

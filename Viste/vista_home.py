@@ -193,8 +193,8 @@ class VistaHome(QWidget):
         self.close()
 
     def go_backup(self):
-        from Controls.gestore_sistema import GestoreBackup      #Collegamento alla vista backup
-        effettua_backup = GestoreBackup()
+        from Controls.gestore_sistema import GestoreSistema      #Collegamento alla vista backup
+        effettua_backup = GestoreSistema()
         effettua_backup.backup()
 
     def update_clock(self):
