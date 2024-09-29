@@ -182,6 +182,8 @@ class GestoreClienti:
             self.msg_box.exec_()
             return
 
+        self.lista_clienti = nuova_lista
+
         # Salvataggio della lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)

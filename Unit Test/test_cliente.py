@@ -19,6 +19,7 @@ class TestCliente(unittest.TestCase):
         if os.path.exists(self.gestore.file_path):   #Rimozione del file alla fine di ogni test
             os.remove(self.gestore.file_path)
 
+    # Metodo che testa l'inserimento di un cliente
     def test_aggiungi_cliente(self):
         cliente = Cliente(
             id=1,
@@ -38,11 +39,38 @@ class TestCliente(unittest.TestCase):
         self.assertEqual(self.gestore.lista_clienti[0].get_nome_cliente(), "Nprova")
         self.assertTrue(os.path.exists(self.gestore.file_path))
 
-        # Carica i dati dal file e verifica che contenga il cliente aggiunto
+        # Caricamento e verifica dei dati dal file
         with open(self.gestore.file_path, 'rb') as file:
             clienti_salvati = pickle.load(file)
             self.assertEqual(len(clienti_salvati), 1)
             self.assertEqual(clienti_salvati[0].get_nome_cliente(), "Nprova")
+
+
+    # Metodo che testa l'inserimento di un cliente
+    def test_elimina_cliente(self):
+        cliente = Cliente(
+            id=1,
+            nome="Nprova",
+            cognome="Cprova",
+            data_nascita="2003-01-01",
+            residenza="Ancona",
+            codice_fiscale="PRVPRV03P12R345V",
+            email="prova@univpm.com",
+            dipendente=None,
+            telefono="1234567890"
+        )
+
+        self.gestore.aggiungi_cliente(cliente)
+        self.assertEqual(len(self.gestore.lista_clienti), 1)  # simulazione dell'inserimento
+
+        self.gestore.elimina_cliente(cliente.get_telefono_cliente())       # rimozione del cliente
+
+        # Verifiche riguardo la corretta rimozione del cliente
+        self.assertEqual(len(self.gestore.lista_clienti), 0)
+        self.assertTrue(os.path.exists(self.gestore.file_path))
+        with open(self.gestore.file_path, 'rb') as file:
+            cliente_salvati = pickle.load(file)
+            self.assertEqual(len(cliente_salvati), 0)
 
 
 if __name__ == '__main__':

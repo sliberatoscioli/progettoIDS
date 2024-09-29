@@ -19,7 +19,8 @@ class TestProdotto(unittest.TestCase):
         if os.path.exists(self.gestore.file_path):   #Rimozione del file alla fine di ogni test
             os.remove(self.gestore.file_path)
 
-    def test_aggiungi_dipendenti(self):
+    # Metodo che testa l'inserimento di un prodotto
+    def test_aggiungi_prodotto(self):
         prodotto = Prodotto(
             id=1,
             scatola=None,
@@ -38,11 +39,63 @@ class TestProdotto(unittest.TestCase):
         self.assertEqual(self.gestore.lista_prodotti[0].get_marca(), "Nike")
         self.assertTrue(os.path.exists(self.gestore.file_path))
 
-        # Carica i dati dal file e verifica che contenga il cliente aggiunto
+        # Caricamento e verifica dei dati dal file
         with open(self.gestore.file_path, 'rb') as file:
             prodotti_salvati = pickle.load(file)
             self.assertEqual(len(prodotti_salvati), 1)
             self.assertEqual(prodotti_salvati[0].get_marca(), "Nike")
+
+    # Metodo che testa la rimozione di un prodotto
+    def test_elimina_prodotto(self):
+        prodotto = Prodotto(
+            id=1,
+            scatola=None,
+            marca="Nike",
+            taglia="S",
+            colore="Nero",
+            descrizione="T-shirt nera a strisce",
+            tipo_prodotto="T-shirt",
+            giacenza="25",
+            prezzo="35.59"
+        )
+
+        self.gestore.aggiungi_prodotto(prodotto)  #simulazione di inserimento
+        self.assertEqual(len(self.gestore.lista_prodotti), 1)
+
+        self.gestore.elimina_prodotto(prodotto.get_id_prodotto())       # rimozione del prodotto
+
+        # Verifiche riguardo la corretta rimozione del prodotto
+        self.assertEqual(len(self.gestore.lista_prodotti), 0)
+        with open(self.gestore.file_path, 'rb') as file:
+            prodotti_salvati = pickle.load(file)
+            self.assertEqual(len(prodotti_salvati), 0)
+
+    def test_elimina_prodotto(self):
+        prodotto = Prodotto(
+            id=1,
+            scatola=None,
+            marca="Nike",
+            taglia="S",
+            colore="Nero",
+            descrizione="T-shirt nera a strisce",
+            tipo_prodotto="T-shirt",
+            giacenza="25",
+            prezzo="35.59"
+        )
+
+        self.gestore.aggiungi_prodotto(prodotto)
+        self.assertEqual(len(self.gestore.lista_prodotti), 1)  # simulazione dell'inserimento
+
+        ID = int(prodotto.get_id_prodotto())
+        self.gestore.elimina_prodotto(ID)       # rimozione del prodotto
+
+        # Verifiche riguardo la corretta rimozione del prodotto
+        self.assertEqual(len(self.gestore.lista_prodotti), 0)
+        self.assertTrue(os.path.exists(self.gestore.file_path))
+        with open(self.gestore.file_path, 'rb') as file:
+            prodotti_salvati = pickle.load(file)
+            self.assertEqual(len(prodotti_salvati), 0)
+
 
 
 if __name__ == '__main__':

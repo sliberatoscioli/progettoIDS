@@ -27,6 +27,14 @@ class GestoreDipendenti:
             with open(self.file_path, 'rb') as file:
                 self.lista_dipendenti = pickle.load(file)
 
+        numero_telefono_nuovo = dipendente.get_telefono()
+        for c in self.lista_dipendenti:
+            if c.get_telefono() == numero_telefono_nuovo:
+                self.msg_box.setText(f"Un cliente con il numero di telefono {numero_telefono_nuovo} è già presente.")
+                self.msg_box.setIcon(QMessageBox.Warning)
+                self.msg_box.exec_()
+                return
+
         # Aggiunta del nuovo dipendente alla lista
         self.lista_dipendenti.append(dipendente)
 
@@ -62,6 +70,8 @@ class GestoreDipendenti:
                 dipendente_trovato = True
             else:
                 nuova_lista.append(dipendente)
+
+        self.lista_dipendenti = nuova_lista
 
         if not dipendente_trovato:
             self.msg_box.setText(f"Nessun dipendente trovato con ID {IDdipendente}.")

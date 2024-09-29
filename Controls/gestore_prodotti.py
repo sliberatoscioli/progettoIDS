@@ -122,6 +122,8 @@ class GestoreProdotti:
             self.msg_box.exec_()
             return
 
+        self.lista_prodotti = nuova_lista
+
         # Salvataggio della lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)
