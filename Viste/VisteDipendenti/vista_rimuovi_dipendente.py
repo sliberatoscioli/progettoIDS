@@ -101,9 +101,11 @@ class CustomTitleBar(QWidget):
         self.close_window()
 
 
+
 class RimuoviDipendente(QMainWindow):
     def __init__(self):
         super().__init__()
+        self.msg_box = QMessageBox()  # Inizializzazione della QMessageBox
 
         # Impostazioni della finestra
         self.setWindowTitle("RIMUOVI DIPENDENTE TRAMITE ID")
@@ -133,7 +135,7 @@ class RimuoviDipendente(QMainWindow):
         main_layout.addWidget(self.datetime_label, alignment=Qt.AlignCenter)
         self.update_time()
 
-        # Label per il titolo
+        # Label
         title_label = QLabel("RIMUOVI  DIPENDENTE", self)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: white;")
@@ -150,7 +152,7 @@ class RimuoviDipendente(QMainWindow):
         self.ID_entry.setFont(label_font)
         self.ID_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
         self.ID_entry.setPlaceholderText("RIMUOVI DIPENDENTE TRAMITE ID")
-        self.ID_entry.setMinimumHeight(40)  # Altezza minima del campo di input
+        self.ID_entry.setMinimumHeight(40)
         main_layout.addWidget(self.ID_entry)
 
         # Layout per i pulsanti
@@ -160,7 +162,7 @@ class RimuoviDipendente(QMainWindow):
         enter_button = QPushButton("ENTER", self)
         enter_button.setFont(button_font)
         enter_button.setStyleSheet("color: white; background-color: purple;")
-        enter_button.setMinimumHeight(50)  # Altezza minima del pulsante
+        enter_button.setMinimumHeight(50)
         enter_button.clicked.connect(self.enter_clicked)
         button_layout.addWidget(enter_button)
 
@@ -168,7 +170,7 @@ class RimuoviDipendente(QMainWindow):
         reset_button = QPushButton("RESET", self)
         reset_button.setFont(button_font)
         reset_button.setStyleSheet("color: white; background-color: purple;")
-        reset_button.setMinimumHeight(50)  # Altezza minima del pulsante
+        reset_button.setMinimumHeight(50)
         reset_button.clicked.connect(self.reset_clicked)
         button_layout.addWidget(reset_button)
 
@@ -191,18 +193,39 @@ class RimuoviDipendente(QMainWindow):
 
 # Metodo che permette la rimozione del cliente
     def enter_clicked(self):
-        ID = self.ID_entry.text()
-        id = int(ID)
-        gestore_dipendenti = GestoreDipendenti()
-        gestore_dipendenti.rimuovi_dipendenti(id)
+        # Controlla che il campo ID non sia vuoto
+        ID = self.ID_entry.text().strip()  # Rimuovozione di eventuali spazi bianchi all'inizio o alla fine
+        if not ID:
+            self.msg_box.setText("Il campo ID non può essere vuoto")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+            return
 
+        # Controllo sul valore inserito sia un numero intero
+        if not ID.isdigit():
+            self.msg_box.setText("L'ID deve essere un numero intero")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+            return
+
+        # Se tutto va bene, converte l'ID in intero e rimuovi il dipendente
+        id = int(ID)
+        gestore_Dipendenti = GestoreDipendenti()
+        if (gestore_Dipendenti.rimuovi_dipendenti(id) == True):
+            self.msg_box.setText(f"Dipendente con ID {id} rimosso con successo.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+
+        else:
+            self.msg_box.setText(f"Dipendente con ID {id} non esiste")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
 
     def reset_clicked(self):
         self.ID_entry.clear()
 
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)
-
 
 # Metodo principale per avviare l'applicazione
 def main():
