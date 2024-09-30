@@ -254,7 +254,7 @@ class RimuoviCliente(QMainWindow):
         # Controllo riguardo il recupero dei dati
         if not clienti:
             self.table_widget.setRowCount(0)
-            self.table_widget.setColumnCount(len(headers))
+            self.table_widget.setColumnCount(len(headers))  # Imposta il numero corretto di colonne
             self.table_widget.setHorizontalHeaderLabels(headers)
             return
 
