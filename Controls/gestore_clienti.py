@@ -147,6 +147,7 @@ class GestoreClienti:
                 cliente_trovato = True
                 continue  # Salta l'aggiunta di questo cliente alla nuova lista
             nuova_lista.append(cliente)
+        self.lista_clienti = nuova_lista
 
         if not cliente_trovato:
             return False

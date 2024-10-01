@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QApplication
 from Attivita.dipendente import Dipendente
 from Controls.gestore_dipendenti import GestoreDipendenti
 
-app = QApplication([])
 class TestDipendente(unittest.TestCase):
     def setUp(self):
         self.gestore = GestoreDipendenti()

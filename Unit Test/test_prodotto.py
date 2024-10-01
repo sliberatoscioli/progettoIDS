@@ -6,7 +6,6 @@ from PyQt5.QtWidgets import QApplication
 from Attivita.prodotto import Prodotto
 from Controls.gestore_prodotti import GestoreProdotti
 
-app = QApplication([])
 class TestProdotto(unittest.TestCase):
     def setUp(self):
         self.gestore = GestoreProdotti()

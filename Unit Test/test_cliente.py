@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication
 from Controls.gestore_clienti import GestoreClienti
 from Attivita.cliente import Cliente
 
-app = QApplication([])
+
 class TestCliente(unittest.TestCase):
     def setUp(self):
         self.gestore = GestoreClienti()

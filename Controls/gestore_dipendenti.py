@@ -57,6 +57,8 @@ class GestoreDipendenti:
             else:
                 nuova_lista.append(dipendente)
 
+        self.lista_dipendenti = nuova_lista
+
         if not dipendente_trovato:
             return
 
