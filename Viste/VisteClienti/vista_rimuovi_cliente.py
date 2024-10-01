@@ -313,7 +313,15 @@ class RimuoviCliente(QMainWindow):
 
     def rimozione_cliente(self, telefono):
         from Controls.gestore_clienti import GestoreClienti
-        GestoreClienti().elimina_cliente(telefono)
+        gestore = GestoreClienti().elimina_cliente(telefono)
+        if(gestore == False):
+            self.msg_box.setText(f"Nessun cliente trovato con telefono {telefono}.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Cliente con telefono {telefono} rimosso con successo.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
 
     def show_message(self, title, message):
         QMessageBox.information(self, title, message)

@@ -1,7 +1,7 @@
 import sys
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
-    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel
+    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
@@ -239,11 +239,20 @@ class VistaRiassortimentoAutomatico(QMainWindow):
 
     # Metodo per eseguire il riassortimento
     def esegui_riassortimento(self, row_idx):
+        self.msg_box = QMessageBox()
         from Controls.gestore_prodotti import GestoreProdotti
         print(row_idx)
 
         # Chiamata al metodo per eseguire il riassortimento automatico
-        GestoreProdotti().riassortimento_automatico(row_idx)
+        riassortimento = GestoreProdotti().riassortimento_automatico(row_idx)
+        if (riassortimento == True):
+            self.msg_box.setText(f"Prodotto con ID {row_idx} riassortito automaticamente.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Nessun prodotto trovato con l'ID {row_idx}.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
 
         # Ricerca la riga nella tabella corrispondente all'ID prodotto (row_idx)
         for row in range(self.table_widget.rowCount()):

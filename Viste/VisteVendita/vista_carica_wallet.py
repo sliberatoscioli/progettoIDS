@@ -273,7 +273,19 @@ class VistaCaricaWallet(QMainWindow):
     # Metodo per il caricamento dei dati
     def load_data(self, telefonoCliente_cercato, importo, metodo_pagamento):
         from Controls.gestore_clienti import GestoreClienti
-        GestoreClienti().carica_wallet(telefonoCliente_cercato,importo,metodo_pagamento)
+        wallet = GestoreClienti().carica_wallet(telefonoCliente_cercato,importo,metodo_pagamento)
+        if (wallet == False):
+            self.msg_box.setText(f"Nessun cliente trovato con numero di telefono {telefonoCliente_cercato}.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Saldo wallet cliente {telefonoCliente_cercato} aggiornato con successo. "
+                                 f"Nuovo saldo: € {wallet:.2f}.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+            self.msg_box.setText(f"Scontrino creato su una cartella Desktop")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
 
 # Metodo principale per avviare l'applicazione
 def main():

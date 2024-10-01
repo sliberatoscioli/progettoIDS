@@ -271,7 +271,7 @@ class VistaInserisciProdotto(QMainWindow):
         prodotto = Prodotto(IDScatola_prodotto,scatola,marca,taglia,colore,descrizione,tipoProdotto,giacenza,prezzo)
 
 
-        # Stampa dei valori dei campi per verificarli
+        # Stampa i valori dei campi per verificarli
         print(f"IDScatola_prodotto: {IDScatola_prodotto}")
         print(f"Taglia: {taglia}")
         print(f"Marca: {marca}")
@@ -301,8 +301,15 @@ class VistaInserisciProdotto(QMainWindow):
             self.msg_box.exec_()
             return
 
-        gestore_prodotto = GestoreProdotti()
-        gestore_prodotto.aggiungi_prodotto(prodotto)
+        aggiunta = GestoreProdotti().aggiungi_prodotto(prodotto)
+        if(aggiunta == True):
+            self.msg_box.setText(f"{prodotto.get_descrizione()} aggiunto con successo.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Errore nel salvataggio dei prodotti: {aggiunta}")
+            self.msg_box.setIcon(QMessageBox.Critical)
+            self.msg_box.exec_()
 
     def reset_clicked(self):
         self.taglia_entry.clear()

@@ -278,7 +278,14 @@ class InserisciDipendente(QMainWindow):
             return
 
         gestore_dipendente = GestoreDipendenti()
-        gestore_dipendente.aggiungi_dipendenti(dipendente)
+        if (gestore_dipendente.aggiungi_dipendenti(dipendente) == False):
+            self.msg_box.setText(f"Un cliente con il numero di telefono {dipendente.get_telefono()} è già presente.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Dipendente {nome} {cognome} aggiunto con successo.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
 
 
     def reset_clicked(self):

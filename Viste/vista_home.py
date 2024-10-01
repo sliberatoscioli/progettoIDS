@@ -193,9 +193,30 @@ class VistaHome(QWidget):
         self.close()
 
     def go_backup(self):
-        from Controls.gestore_sistema import GestoreSistema      #Collegamento alla vista backup
-        effettua_backup = GestoreSistema()
-        effettua_backup.backup()
+        from Controls.gestore_sistema import GestoreSistema
+        gestore = GestoreSistema()
+        cartella_creata, cartella_backup, files_copiati = gestore.backup()
+        self.msg_box = QMessageBox()
+
+        # Crea un messaggio di conferma sul backup
+        if cartella_creata:
+            self.msg_box.setText(f"Cartella di backup creata in: {cartella_backup}\n")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+
+        else:
+            self.msg_box.setText(f"La cartella di backup esiste già in: {cartella_backup}\n")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+
+        if files_copiati:
+            self.msg_box.setText(f"Backup dei seguenti file completato:\n" + "\n".join(files_copiati))
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText("Nessun file trovato per il backup.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
 
     def update_clock(self):
         current_time = QTime.currentTime().toString('HH:mm:ss')

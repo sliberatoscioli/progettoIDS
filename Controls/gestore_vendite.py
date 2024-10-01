@@ -1,6 +1,5 @@
 import pickle
 from datetime import datetime
-from PyQt5.QtWidgets import QMessageBox
 from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
@@ -13,16 +12,13 @@ class GestoreVendite:
 
     def __init__(self):
         self.lista_acquisti = []
-        self.msg_box = QMessageBox()
         self.file_path = 'Dati/Acquisti.pkl'  # Percorso del file nella cartella "Dati"
 
     # Metodo che restituisce la lista degli acquisti
     def ritorna_lista_acquisti(self):
         try:
             if not os.path.exists(self.file_path):
-                self.msg_box.setText("Il file degli acquisti non esiste.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
+                print("Il file degli acquisti non esiste.")
                 return []
 
             # Caricamento dei prodotti dal file pickle
@@ -32,21 +28,15 @@ class GestoreVendite:
             return acquisti
 
         except FileNotFoundError:
-            self.msg_box.setText("Il file degli acquisti non è stato trovato.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file degli acquisti non è stato trovato.")
             return []
 
         except pickle.PickleError:
-            self.msg_box.setText("Errore nel caricamento del file pickle degli acquisti.")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print("Errore nel caricamento del file pickle degli acquisti.")
             return []
 
         except Exception as e:
-            self.msg_box.setText(f"Errore imprevisto: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Errore imprevisto: {e}")
             return []
 
 
@@ -62,16 +52,12 @@ class GestoreVendite:
                 with open(self.file_path, 'rb') as file:
                     self.lista_acquisti = pickle.load(file)
             except Exception as e:
-                self.msg_box.setText(f"Errore nel caricamento degli acquisti: {e}")
-                self.msg_box.setIcon(QMessageBox.Critical)
-                self.msg_box.exec_()
+                print(f"Errore nel caricamento degli acquisti: {e}")
                 return
 
         # Verifica che l'ID dell'acquisto non sia duplicato
         if any(acq.get_id() == acquisto.get_id() for acq in self.lista_acquisti):
-            self.msg_box.setText("Un acquisto con questo ID esiste già.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Un acquisto con questo ID esiste già.")
             return
 
         # Aggiunta del nuovo acquisto alla lista
@@ -82,15 +68,9 @@ class GestoreVendite:
             with open(self.file_path, 'wb') as file:
                 pickle.dump(self.lista_acquisti, file)
         except Exception as e:
-            self.msg_box.setText(f"Errore nel salvataggio degli acquisti: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
-            return
+            return e
 
-        # Messaggio di conferma
-        self.msg_box.setText(f"Acquisto con ID {acquisto.get_id()} aggiunto con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+        return True
 
     # Metodo che restituisce l'ultimo ID della lista di acquisti
     def ritorna_ultimo_ID_acquisto(self):
@@ -152,11 +132,6 @@ class GestoreVendite:
         c.showPage()
         c.save()
 
-        msg_box = QMessageBox()
-        msg_box.setIcon(QMessageBox.Information)
-        msg_box.setText(f"Scontrino creato con successo!\nPercorso: {percorso_file}")
-        msg_box.setWindowTitle("Successo")
-        msg_box.exec_()
 
     # Metodo per la creazione di uno scontrino fiscale per l'acquisto
     def CreaScontrinoAcquisto(self, prodotti, prezzoSconto, codiceVenditaCompletato):
@@ -243,10 +218,7 @@ class GestoreVendite:
         c.showPage()
         c.save()
 
-        # Messaggio di successo
-        self.msg_box.setText(f"Scontrino creato con successo: {nome_file}")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+        return nome_file
 
     # Metodo che stampa la lista degli acquisti di un cliente
     def storico_acquisti_cliente(self, ID_cliente):
@@ -347,10 +319,7 @@ class GestoreVendite:
                 # Aggiornamento del saldo
                 cliente_trovato.set_saldo_wallet(prezzo_wallet)
             except ValueError as e:
-                self.msg_box.setText(f"Errore durante l'aggiornamento del wallet: {e}")
-                self.msg_box.setIcon(QMessageBox.Critical)
-                self.msg_box.exec_()
-                return  # Interrompe l'operazione in caso di errore
+                return e # Interrompe l'operazione in caso di errore
 
         # Ricerca dell'acquisto corrispondente al codice vendita e rimozione del prodotto
         acquisto_trovato = None
@@ -386,10 +355,7 @@ class GestoreVendite:
 
         with open(percorso_file_prodotti, 'wb') as file_prodotti:
             pickle.dump(lista_prodotti, file_prodotti)
-
-        self.msg_box.setText("Reso del prodotto avvenuto con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+        return True
 
     # Metodo per il riepilogo giornaliero delle vendite
     def riepilogo_giornaliero(self):
@@ -450,8 +416,8 @@ class GestoreVendite:
 
         # Creazione di una lista delle quantità totali per tipo di prodotto
         quantita_totale_per_tipo = [(tipo, quantita) for tipo, quantita in quantita_per_tipo.items()]
-        self.crea_pdf_riassunto_giornaliero(info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo)
-        return info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo
+        path_name = self.crea_pdf_riassunto_giornaliero(info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo)
+        return info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_totale_per_tipo, path_name
 
     # Metodo per la stampa del riepilogo in formato PDF
     def crea_pdf_riassunto_giornaliero(self, dati, totale_contanti, totale_carta_di_credito, totale_saldo_wallet,
@@ -588,6 +554,4 @@ class GestoreVendite:
 
         c.showPage()
         c.save()
-        self.msg_box.setText(f"Riepilogo giornaliero in PDF generato con successo: {pdf_path}")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+        return pdf_path

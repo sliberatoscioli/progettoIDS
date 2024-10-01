@@ -14,29 +14,21 @@ class GestoreSistema:
 
     def backup(self):
         # Creazione della cartella 'Backup' se non esiste e copia dei file
+        cartella_creata = False
         if not os.path.exists(self.cartella_backup):
             os.makedirs(self.cartella_backup)
-            self.msg_box.setText(f"Cartella di backup creata in: {self.cartella_backup}")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
-        else:
-            self.msg_box.setText(f"La cartella di backup esiste già in: {self.cartella_backup}")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            cartella_creata = True
 
-        # Copia dei file dalla cartella Dati alla cartella Backup
+        # Copia i file dalla cartella 'Dati' alla cartella 'Backup'
+        files_copiati = []
         for file_name in self.files_to_backup:
-            file_sorgente = os.path.join(self.cartella_dati, file_name)  #percorso originario
+            file_sorgente = os.path.join(self.cartella_dati, file_name)
             if os.path.exists(file_sorgente):
-                dest_file = os.path.join(self.cartella_backup, file_name) #percorso finale
+                dest_file = os.path.join(self.cartella_backup, file_name)
                 shutil.copy(file_sorgente, dest_file)
-                self.msg_box.setText(f"Backup del file {file_name} completato.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
-            else:
-                self.msg_box.setText(f"File {file_name} non trovato nella cartella 'Dati'.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
+                files_copiati.append(file_name)
+
+        return cartella_creata, self.cartella_backup, files_copiati
 
     # Metodo per prelevare username e password
     def preleva_username_password(self):

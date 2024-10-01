@@ -2,26 +2,25 @@ import pickle
 import os
 import webbrowser
 from datetime import datetime
-from PyQt5.QtWidgets import QMessageBox
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle
 from reportlab.lib import colors
+
 from Controls.gestore_clienti import GestoreClienti
+
 
 class GestoreDipendenti:
 
     def __init__(self):
         self.lista_dipendenti = []
-        self.msg_box = QMessageBox()
         self.file_path = 'Dati/Dipendenti.pkl'  # Percorso del file nella cartella "Dati"
 
-    # Metodo per l'aggiunta dei dipendenti
     def aggiungi_dipendenti(self, dipendente):
-        # Si verifica se la cartella "Dati" esiste, altrimenti viene creata
+        # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
             os.makedirs('Dati')
 
-        # Si verifica se il file pickle esiste già
+        # Verifica se il file pickle esiste già
         if os.path.exists(self.file_path):
             # Carica i dipendenti esistenti
             with open(self.file_path, 'rb') as file:
@@ -30,39 +29,26 @@ class GestoreDipendenti:
         numero_telefono_nuovo = dipendente.get_telefono()
         for c in self.lista_dipendenti:
             if c.get_telefono() == numero_telefono_nuovo:
-                self.msg_box.setText(f"Un cliente con il numero di telefono {numero_telefono_nuovo} è già presente.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
-                return
-
-        # Aggiunta del nuovo dipendente alla lista
+                return False
+        # Aggiungi il nuovo dipendente alla lista
         self.lista_dipendenti.append(dipendente)
 
-        # Salvataggio della lista aggiornata nel file pickle
+        # Salva la lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(self.lista_dipendenti, file)
 
-        # Messaggio di conferma
-        Nome = dipendente.get_nome()
-        Cognome = dipendente.get_cognome()
-        self.msg_box.setText(f"Dipendente {Nome} {Cognome} aggiunto con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+        return True
 
-    # Metodo per la rimozione dei dipendenti
     def rimuovi_dipendenti(self, IDdipendente):
-        # Si verifica se il file pickle esiste
+        # Verifica se il file pickle esiste
         if not os.path.exists(self.file_path):
-            self.msg_box.setText("Il file dei dipendenti non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
             return
 
-        # Caricamento dei dipendenti esistenti
+        # Carica i dipendenti esistenti
         with open(self.file_path, 'rb') as file:
             self.lista_dipendenti = pickle.load(file)
 
-        # Ricerca e rimozione del dipendente con l'ID specificato
+        # Trova e rimuovi il dipendente con l'ID specificato
         dipendente_trovato = False
         nuova_lista = []
         for dipendente in self.lista_dipendenti:
@@ -71,98 +57,70 @@ class GestoreDipendenti:
             else:
                 nuova_lista.append(dipendente)
 
-        self.lista_dipendenti = nuova_lista
-
         if not dipendente_trovato:
-            self.msg_box.setText(f"Nessun dipendente trovato con ID {IDdipendente}.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
             return
 
-        # Salvataggio della lista aggiornata nel file pickle
+        # Salva la lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)
+        return True
 
-        # Messaggio di conferma
-        self.msg_box.setText(f"Dipendente con ID {IDdipendente} rimosso con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
-
-    # Metodo che restituisce la lista dei dipendenti
     def ritorna_lista_dipendenti(self):
         try:
-            # Si verifica se il file dei dipendenti esiste
+            # Verifica se il file dei dipendenti esiste
             if not os.path.exists(self.file_path):
-                self.msg_box.setText("Il file dei dipendenti non esiste.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
+                print("Il file dei dipendenti non esiste.")
                 return []
 
-            # Caricamento dei dipendenti dal file pickle
+            # Carica i dipendenti dal file pickle
             with open(self.file_path, 'rb') as file:
                 dipendenti = pickle.load(file)
 
             return dipendenti
 
         except FileNotFoundError:
-            self.msg_box.setText("Il file dei dipendenti non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei dipendenti non esiste.")
             return []
 
         except pickle.PickleError:
-            self.msg_box.setText("Errore nel caricare il file dei dipendenti.")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print("Il file dei dipendenti non esiste.")
             return []
 
-    # Metodo che restituisce un dipendente dato il suo ID
     def ritorna_dipendente_per_id(self, id):
         dipendenti = self.ritorna_lista_dipendenti()
 
-        # Ricerca del dipendente con l'ID specificato
+        # Cerca il dipendente con l'ID specificato
         for dipendente in dipendenti:
             if dipendente.get_id() == id:
-                return dipendente     #Dipendente trovato
+                return dipendente
+        return None
 
-        self.msg_box.setText(f"Nessun dipendente trovato con ID {id}.")
-        self.msg_box.setIcon(QMessageBox.Warning)
-        self.msg_box.exec_()
-        return None  #Nessun dipendente trovato
-
-    # Metodo di ricerca del dipendente per ID
     def esiste_dipendente(self, IDdipendente):
         # Verifica se il file pickle esiste
         if not os.path.exists(self.file_path):
-            self.msg_box.setText("Il file dei dipendenti non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei dipendenti non esiste.")
             return False
 
-        # Caricamento dei dipendenti esistenti
+        # Carica i dipendenti esistenti
         with open(self.file_path, 'rb') as file:
             dipendenti = pickle.load(file)
 
-        # Ricerca del dipendente con l'ID specificato
+        # Controlla se esiste un dipendente con l'ID specificato
         for dipendente in dipendenti:
             if dipendente.get_id() == IDdipendente:
                 return 1
 
         return 0
 
-    # Metodo di stampa di un report per i dipendenti
     def report_dipendenti(self):
-        # Caricamento della lista dei clienti
+        # Carica la lista dei clienti
         lista_clienti = GestoreClienti().ritorna_lista_clienti()
 
-        # Si verifica se il file dei dipendenti esiste
+        # Verifica se il file dei dipendenti esiste
         if not os.path.exists(self.file_path):
-            self.msg_box.setText("Il file dei dipendenti non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
-            return
+            return False
 
-        # Caricamento dei dipendenti esistenti
+        # Carica i dipendenti esistenti
         with open(self.file_path, 'rb') as file:
             dipendenti = pickle.load(file)
 
@@ -172,6 +130,7 @@ class GestoreDipendenti:
         if not os.path.exists(cartella_report):
             os.makedirs(cartella_report)
 
+        # Crea la data
         data_corrente = datetime.now().strftime('%Y-%m-%d')
 
         # Percorso completo del file PDF
@@ -187,7 +146,7 @@ class GestoreDipendenti:
             numero_clienti = sum(
                 1 for cliente in lista_clienti if cliente.get_dipendente_inserimento().get_id() == dipendente_id)
 
-            # Aggiunta delle informazioni alla tabella
+            # Aggiungi le informazioni alla tabella
             data.append([
                 dipendente.get_id(),
                 dipendente.get_nome(),
@@ -217,18 +176,16 @@ class GestoreDipendenti:
         try:
             doc.build(elements)
         except Exception as e:
-            self.msg_box.setText(f"Errore durante la generazione del PDF: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Errore durante la generazione del PDF: {e}")
             return
 
         # Apertura automatica del PDF
         try:
             webbrowser.open(pdf_name)
-            self.msg_box.setText(f"Report generato con successo: {pdf_name}")
-            self.msg_box.setIcon(QMessageBox.Information)
-            self.msg_box.exec_()
+            return pdf_name
+
         except Exception as e:
-            self.msg_box.setText(f"Impossibile aprire il PDF: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Impossibile aprire il PDF: {e}")
+
+
+

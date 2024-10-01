@@ -1,20 +1,16 @@
 import pickle
 import os
-from PyQt5.QtWidgets import QMessageBox
 
 class GestoreProdotti:
     def __init__(self):
         self.lista_prodotti = []
-        self.msg_box = QMessageBox()
         self.file_path = 'Dati/Prodotti.pkl'  # Percorso del file nella cartella "Dati"
 
     # Metodo che restituisce la lista dei prodotti
     def ritorna_lista_prodotti(self):
         try:
             if not os.path.exists(self.file_path):
-                self.msg_box.setText("Il file dei prodotti non esiste.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
+                print("Il file dei prodotti non esiste.")
                 return []
 
             # Caricamento dei prodotti dal file pickle
@@ -24,21 +20,15 @@ class GestoreProdotti:
             return prodotti
 
         except FileNotFoundError:
-            self.msg_box.setText("Il file dei prodotti non è stato trovato.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei prodotti non è stato trovato.")
             return []
 
         except pickle.PickleError:
-            self.msg_box.setText("Errore nel caricamento del file pickle dei prodotti.")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print("Errore nel caricamento del file pickle dei prodotti.")
             return []
 
         except Exception as e:
-            self.msg_box.setText(f"Errore imprevisto: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Errore imprevisto: {e}")
             return []
 
     # Metodo per l'aggiunta di un prodotto
@@ -53,16 +43,12 @@ class GestoreProdotti:
                 with open(self.file_path, 'rb') as file:
                     self.lista_prodotti = pickle.load(file)
             except Exception as e:
-                self.msg_box.setText(f"Errore nel caricamento dei prodotti: {e}")
-                self.msg_box.setIcon(QMessageBox.Critical)
-                self.msg_box.exec_()
+                print(f"Errore nel caricamento dei prodotti: {e}")
                 return
 
         # Verifica che l'ID del prodotto non sia duplicato
         if any(prod.get_id_prodotto() == prodotto.get_id_prodotto() for prod in self.lista_prodotti):
-            self.msg_box.setText("Un prodotto con questo ID esiste già.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Un prodotto con questo ID esiste già.")
             return
 
         # Aggiunta del nuovo prodotto alla lista
@@ -72,17 +58,10 @@ class GestoreProdotti:
         try:
             with open(self.file_path, 'wb') as file:
                 pickle.dump(self.lista_prodotti, file)
+                return True
         except Exception as e:
-            self.msg_box.setText(f"Errore nel salvataggio dei prodotti: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
-            return
+            return e
 
-        # Messaggio di conferma
-        descrizione = prodotto.get_descrizione()
-        self.msg_box.setText(f"{descrizione} aggiunto con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
 
     # Metodo che restituisce l'ultimo ID salvato
     def ritorna_ultimo_IDprodotto(self):
@@ -109,29 +88,20 @@ class GestoreProdotti:
         prodotti = self.ritorna_lista_prodotti()
 
         if not prodotti:
-            self.msg_box.setText("Il file dei prodotti è vuoto o non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei prodotti è vuoto o non esiste.")
             return
 
         nuova_lista = [prod for prod in prodotti if prod.get_id_prodotto() != id_prodotto]
 
         if len(nuova_lista) == len(prodotti):
-            self.msg_box.setText(f"Nessun prodotto trovato con l'ID {id_prodotto}.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
-            return
+            return False
 
         self.lista_prodotti = nuova_lista
 
         # Salvataggio della lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)
-
-        # Messaggio di conferma
-        self.msg_box.setText(f"Prodotto con ID {id_prodotto} rimosso con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+            return True
 
     # Metodo che restituisce i prodotti con giacenza critica (<10)
     def ritorna_prodotto_giacenza_critica(self):
@@ -148,9 +118,7 @@ class GestoreProdotti:
         prodotti = self.ritorna_lista_prodotti()
 
         if not prodotti:
-            self.msg_box.setText("Il file dei prodotti è vuoto o non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei prodotti è vuoto o non esiste.")
             return
 
         prodotto_trovato = None
@@ -165,14 +133,9 @@ class GestoreProdotti:
             # Salvataggio della lista aggiornata nel file pickle
             with open(self.file_path, 'wb') as file:
                 pickle.dump(prodotti, file)
-            # Messaggio di conferma
-            self.msg_box.setText(f"Prodotto con ID {id_prodotto} riassortito automaticamente.")
-            self.msg_box.setIcon(QMessageBox.Information)
-            self.msg_box.exec_()
+                return True
         else:
-            self.msg_box.setText(f"Nessun prodotto trovato con l'ID {id_prodotto}.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            return False
 
     # Metodo per aggiornare la lista dei prodotti
     def aggiorna_prodotti(self, prodotti_acquistati):

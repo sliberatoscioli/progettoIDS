@@ -1,7 +1,7 @@
 import sys
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
-    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QLineEdit
+    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QLineEdit, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
@@ -254,11 +254,20 @@ class VistaOttieniInfoProdotto(QMainWindow):
     # Metodo per l'eliminazione di un prodotto dal file
     def elimina_prodotto(self, prodotto_id):
         from Controls.gestore_prodotti import GestoreProdotti
-
+        self.msg_box = QMessageBox()
         gestore_prodotto = GestoreProdotti()
 
         # Eliminare il prodotto
-        gestore_prodotto.elimina_prodotto(prodotto_id)
+        elimina = gestore_prodotto.elimina_prodotto(prodotto_id)
+        if(elimina == True):
+            self.msg_box.setText(f"Prodotto con ID {prodotto_id} rimosso con successo.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Nessun prodotto trovato con l'ID {prodotto_id}.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+
         # Ricerca e rimozione della riga dalla tabella
         row_count = self.table_widget.rowCount()
         for row in range(row_count):

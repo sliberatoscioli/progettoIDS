@@ -468,6 +468,7 @@ class VistaVenditaProdotto(QMainWindow):
         # Controllo dei campi obbligatori
         telefono_cliente = self.telefono_cliente_entry.text().strip()
         metodo_pagamento = self.seleziona_metodo_pagamento()
+        self.msg_box = QMessageBox()
 
         if not telefono_cliente:
             QMessageBox.warning(self, "Campo obbligatorio", "Inserisci il numero di telefono del cliente.")
@@ -491,7 +492,10 @@ class VistaVenditaProdotto(QMainWindow):
         cliente = GestoreClienti().cerca_per_telefono(telefono_cliente)
 
 
-        if not cliente :   #Cliente non trovato
+        if not cliente : #Cliente non trovato
+            self.msg_box.setText(f"Nessun cliente trovato con numero di telefono {telefono_cliente}.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
             return
 
         saldo_wallet = cliente[0].get_saldo_wallet()
@@ -537,9 +541,22 @@ class VistaVenditaProdotto(QMainWindow):
         acquisto = Acquisto(id,cliente[0],prodotti,datetime.now().strftime("%Y-%m-%d %H:%M:%S"),metodo_pagamento,codice)
 
         #Salvataggio acquisti nel gestore vendite
-        GestoreVendite().aggiungi_acquisto(acquisto) #Memorizzazione dell'acquisto nel file
+        vendita = GestoreVendite().aggiungi_acquisto(acquisto) #Memorizzazione dell'acquisto nel file
+        if(vendita == True):
+            self.msg_box.setText(f"Acquisto con ID {acquisto.get_id()} aggiunto con successo.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Errore nel salvataggio degli acquisti: {vendita}")
+            self.msg_box.setIcon(QMessageBox.Critical)
+            self.msg_box.exec_()
+
         prezzo_scontato_formattato = f"€{self.prezzoSconto:.2f}"
-        GestoreVendite().CreaScontrinoAcquisto(prodotti,prezzo_scontato_formattato,acquisto.get_codice_vendita()) #creazione dello scontrino fiscale
+        scontrino = GestoreVendite().CreaScontrinoAcquisto(prodotti,prezzo_scontato_formattato,acquisto.get_codice_vendita()) #creazione dello scontrino fiscale
+        self.msg_box.setText(f"Scontrino creato con successo: {scontrino}")
+        self.msg_box.setIcon(QMessageBox.Information)
+        self.msg_box.exec_()
+
         GestoreProdotti().aggiorna_prodotti(prodotti)
         if metodo_pagamento == "SALDO WALLET":
             if self.prezzoSconto != 0:

@@ -200,8 +200,17 @@ class vistaDipendente(QWidget):
 
     def go_report(self):
         from Controls.gestore_dipendenti import GestoreDipendenti
-        gestore_dipendenti = GestoreDipendenti()         #Collegamento al metodo della classe gestore
-        gestore_dipendenti.report_dipendenti()
+        gestore_dipendenti = GestoreDipendenti()
+        self.msg_box = QMessageBox()
+        if (gestore_dipendenti.report_dipendenti() == False):           #Collegamento al metodo della classe gestore
+            self.msg_box.setText("Il file dei dipendenti non esiste.")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Report generato con successo: {gestore_dipendenti.report_dipendenti()}")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+
     def go_home(self):
         from Viste.vista_home import VistaHome
         self.home_view = VistaHome()             #Collegamento alla vista_home

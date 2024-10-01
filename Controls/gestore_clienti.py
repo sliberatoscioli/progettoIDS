@@ -1,27 +1,23 @@
 import os
 import pickle
-from PyQt5.QtWidgets import QMessageBox
 from Controls.gestore_vendite import GestoreVendite
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.pagesizes import letter
 import webbrowser  # Per aprire il PDF
 
+
+
 class GestoreClienti:
 
     def __init__(self):
         self.lista_clienti = []
-        self.msg_box = QMessageBox()
         self.file_path = 'Dati/Clienti.pkl'  # Percorso del file nella cartella "Dati"
 
-    # Metodo che restituisce la lista dei clienti
     def ritorna_lista_clienti(self):
         try:
             # Verifica se il file dei clienti esiste
             if not os.path.exists(self.file_path):
-                self.msg_box.setText("Il file dei clienti non esiste.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
                 return []
 
             # Carica i clienti dal file pickle
@@ -31,24 +27,17 @@ class GestoreClienti:
             return clienti
 
         except FileNotFoundError:
-            self.msg_box.setText("Il file dei clienti non è stato trovato.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei clienti non è stato trovato.")
             return []
 
         except pickle.PickleError:
-            self.msg_box.setText("Errore nel caricamento del file pickle dei clienti.")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print("Errore nel caricamento del file pickle dei clienti.")
             return []
 
         except Exception as e:
-            self.msg_box.setText(f"Errore imprevisto: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Errore imprevisto: {e}")
             return []
 
-    # Metodo per l'aggiunta del cliente
     def aggiungi_cliente(self, cliente):
         # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
@@ -68,10 +57,7 @@ class GestoreClienti:
         numero_telefono_nuovo = cliente.get_telefono_cliente()
         for c in self.lista_clienti:
             if c.get_telefono_cliente() == numero_telefono_nuovo:
-                self.msg_box.setText(f"Un cliente con il numero di telefono {numero_telefono_nuovo} è già presente.")
-                self.msg_box.setIcon(QMessageBox.Warning)
-                self.msg_box.exec_()
-                return
+                return False
 
         # Aggiungi il nuovo cliente alla lista
         self.lista_clienti.append(cliente)
@@ -81,19 +67,12 @@ class GestoreClienti:
                 pickle.dump(self.lista_clienti, file)
 
         except pickle.PickleError as e:
-            self.msg_box.setText(f"Errore durante il salvataggio dei dati: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Errore durante il salvataggio dei dati: {e}")
             return
 
-        # Mostra il messaggio di conferma
-        Nome = cliente.get_nome_cliente()
-        Cognome = cliente.get_cognome_cliente()
-        self.msg_box.setText(f"Cliente {Nome} {Cognome} aggiunto con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
+        return True
 
-    # Metodo per la stampa della lista dei clienti in formato PDF
+
     def stampa_pdf_clienti(self):
         clienti = self.ritorna_lista_clienti()
 
@@ -114,7 +93,7 @@ class GestoreClienti:
         title_style = ParagraphStyle(name='TitleStyle', fontName='Helvetica-Bold', fontSize=18, alignment=1)
         client_info_style = ParagraphStyle(name='ClientInfoStyle', fontName='Helvetica', fontSize=12)
 
-        # Aggiunta del titolo al documento
+        # Aggiungi un titolo al documento
         title = Paragraph("Lista Clienti", title_style)
         elements.append(title)
         elements.append(Spacer(1, 50))  # Spazio sotto il titolo
@@ -135,7 +114,7 @@ class GestoreClienti:
                 f"<b>Saldo Wallet:</b> € {cliente.get_saldo_wallet():.2f}<br/>"
             )
 
-            # Aggiunta delle informazioni del cliente come testo
+            # Aggiungi le informazioni del cliente come testo
             client_paragraph = Paragraph(client_info, client_info_style)
             elements.append(client_paragraph)
             elements.append(Spacer(1, 24))  # Spazio tra i clienti
@@ -145,27 +124,20 @@ class GestoreClienti:
         try:
             doc.build(elements)
         except Exception as e:
-            self.msg_box.setText(f"Errore durante la creazione del PDF: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
-            return
+            return False
 
         # Apertura automatica del PDF
         try:
             webbrowser.open(pdf_name)
+            return pdf_name
         except Exception as e:
-            self.msg_box.setText(f"Impossibile aprire il PDF: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
+            print(f"Impossibile aprire il PDF: {e}")
 
-    # Metodo per l'eliminazione dei clienti
     def elimina_cliente(self, search_text):
         clienti = self.ritorna_lista_clienti()
 
         if not clienti:
-            self.msg_box.setText("Il file dei clienti è vuoto o non esiste.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            print("Il file dei clienti è vuoto o non esiste.")
             return
 
         cliente_trovato = False
@@ -177,21 +149,12 @@ class GestoreClienti:
             nuova_lista.append(cliente)
 
         if not cliente_trovato:
-            self.msg_box.setText(f"Nessun cliente trovato con il numero di telefono {search_text}.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
-            return
+            return False
 
-        self.lista_clienti = nuova_lista
-
-        # Salvataggio della lista aggiornata nel file pickle
+        # Salva la lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)
 
-        # Messaggio di conferma
-        self.msg_box.setText(f"Cliente con numero di telefono {search_text} rimosso con successo.")
-        self.msg_box.setIcon(QMessageBox.Information)
-        self.msg_box.exec_()
 
     # Metodo ricerca cliente per nome
     def cerca_per_nome(self, search_text):
@@ -199,13 +162,11 @@ class GestoreClienti:
         risultati = []
 
         for cliente in clienti:
-            if search_text == cliente.get_nome_cliente():  # Confronta il nome ignorando maiuscole/minuscole
+            if search_text == cliente.get_nome_cliente():  # Confronta ignorando maiuscole/minuscole
                 risultati.append(cliente)
 
         if not risultati:
-            self.msg_box.setText(f"Nessun cliente trovato con il nome '{search_text}'.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+           return False
 
         return risultati
 
@@ -217,17 +178,15 @@ class GestoreClienti:
         search_text = str(search_text)
 
         for cliente in clienti:
-            if search_text == str(cliente.get_id_cliente()):  #Confronta ID
+            if search_text == str(cliente.get_id_cliente()):  # Assicurati che il confronto sia esatto
                 risultati.append(cliente)
 
         if not risultati:
-            self.msg_box.setText(f"Nessun cliente trovato con ID '{search_text}'.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+          return False
 
         return risultati
 
-    # Metodo ricerca cliente per numero di telefono
+    # Metodo che ricerca cliente per numero di telefono
     def cerca_per_telefono(self, search_text):
         clienti = self.ritorna_lista_clienti()
         risultati = []
@@ -239,9 +198,7 @@ class GestoreClienti:
                 risultati.append(cliente)
 
         if not risultati:
-            self.msg_box.setText(f"Nessun cliente trovato con il telefono '{search_text}'.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+            return False
 
         return risultati
 
@@ -256,13 +213,10 @@ class GestoreClienti:
                 risultati.append(cliente)
 
         if not risultati:
-            self.msg_box.setText(f"Nessun cliente trovato con il codice fiscale '{search_text}'.")
-            self.msg_box.setIcon(QMessageBox.Warning)
-            self.msg_box.exec_()
+          return False
 
         return risultati
 
-    # Metodo per la ricarica del portafoglio virtuale
     def carica_wallet(self, telefono, ricarica, metodo_pagamento):
         # Carica i clienti
         lista_clienti = self.ritorna_lista_clienti()
@@ -274,30 +228,18 @@ class GestoreClienti:
                 break
 
         if cliente_trovato is None:
-            self.msg_box.setText(f"Nessun cliente trovato con numero di telefono {telefono}.")
-            self.msg_box.setIcon(QMessageBox.Information)
-            self.msg_box.exec_()
-            return
+            return False
 
-        # Aggiunta della ricarica al saldo attuale
+        # Aggiungi la ricarica al saldo attuale
         nuovo_saldo = cliente_trovato.get_saldo_wallet() + ricarica
         cliente_trovato.set_saldo_wallet(nuovo_saldo)
 
         try:
-            # Salvataggio della lista aggiornata nel file pickle
+            # Salva la lista aggiornata nel file pickle
             with open(self.file_path, 'wb') as file:
                 pickle.dump(lista_clienti, file)
-
-            # Messaggio di conferma
-            self.msg_box.setText(f"Saldo wallet cliente con telefono {telefono} aggiornato con successo. "
-                                 f"Nuovo saldo: € {nuovo_saldo:.2f}.")
-            self.msg_box.setIcon(QMessageBox.Information)
-            self.msg_box.exec_()
+            Scontrino = GestoreVendite().creaScontrinoWallet(telefono, ricarica, metodo_pagamento)
+            return nuovo_saldo
 
         except pickle.PickleError as e:
-            self.msg_box.setText(f"Errore durante il salvataggio del saldo wallet: {e}")
-            self.msg_box.setIcon(QMessageBox.Critical)
-            self.msg_box.exec_()
-
-        # Metodo crea scontrino saldo_wallet
-        Scontrino = GestoreVendite().creaScontrinoWallet(telefono,ricarica,metodo_pagamento)
+            print(f"Errore durante il salvataggio del saldo wallet: {e}")

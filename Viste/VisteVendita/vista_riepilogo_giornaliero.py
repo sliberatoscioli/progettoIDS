@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget,
-                             QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel)
+                             QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QMessageBox)
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
@@ -226,8 +226,9 @@ class VistaRiepilogoGiornaliero(QMainWindow):
     # Metodo per il caricamento dei dati
     def load_data(self):
         from Controls.gestore_vendite import GestoreVendite
+        self.msg_box = QMessageBox()
         riepilogo = GestoreVendite()
-        info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_per_categoria = riepilogo.riepilogo_giornaliero()
+        info, totale_contanti, totale_carta_di_credito, totale_saldo_wallet, quantita_per_categoria, path_name = riepilogo.riepilogo_giornaliero()
 
         # Si verifica se i dati sono caricati correttamente
         if info is None:
@@ -277,6 +278,10 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         self.wallet_total_label.setText(f"3) Totale Saldi Wallet: €{totale_saldo_wallet:.2f}")
         grand_total = totale_carta_di_credito + totale_contanti + totale_saldo_wallet
         self.grand_total_label.setText(f"4) Totale Complessivo: €{grand_total:.2f}")
+
+        self.msg_box.setText(f"Riepilogo giornaliero in PDF generato con successo: {path_name}")
+        self.msg_box.setIcon(QMessageBox.Information)
+        self.msg_box.exec_()
 
     # Metodo per aggiornare la data in tempo reale
     def update_time(self):

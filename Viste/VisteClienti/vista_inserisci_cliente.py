@@ -272,18 +272,18 @@ class InserisciCliente(QMainWindow):
 
     def enter_clicked(self):
 
-        # Recupero dei dati dalle entry (controllo che non siano vuoti)
+        # Recupera i dati dalle entry e assicurati che non siano vuoti
         ID = self._ottieni_ultimo_id() + 1
         nome = self.nome_entry.text().upper()
         cognome = self.cognome_entry.text().upper()
         residenza = self.residenza_entry.text().upper()
         email = self.email_entry.text()
         telefono = self.telefono_entry.text()
-        data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")
+        data_di_nascita = self.data_entry.date().toString("yyyy-MM-dd")  # Formatta la data come '2003-01-01'
         codice_fiscale = self.Codice_fiscale_entry.text().upper()
         id_dipendente = self.Id_dipendente_entry.text()
 
-        # Controllo di tutti i campi
+        # Controlla se tutti i campi sono stati compilati
         if not all([nome, cognome, residenza, email, telefono, data_di_nascita, codice_fiscale, id_dipendente]):
             self.msg_box.setText("Errore: tutti i campi devono essere compilati.")
             self.msg_box.setIcon(QMessageBox.Warning)
@@ -316,13 +316,29 @@ class InserisciCliente(QMainWindow):
                 return
             else:
                 dipendente = gestore_dipendente.ritorna_dipendente_per_id(id)
+                if ( dipendente == None):
+                    # Restituisce None se il dipendente non viene trovato
+                    self.msg_box.setText(f"Nessun dipendente trovato con ID {id}.")
+                    self.msg_box.setIcon(QMessageBox.Warning)
+                    self.msg_box.exec_()
                 cliente = Cliente(ID,nome,cognome,data_di_nascita,residenza,codice_fiscale,email,dipendente,telefono)
-                gestore_cliente.aggiungi_cliente(cliente)
+                if(gestore_cliente.aggiungi_cliente(cliente) == True):
+                    self.msg_box.setText(f"Cliente {nome} {cognome} aggiunto con successo.")
+                    self.msg_box.setIcon(QMessageBox.Information)
+                    self.msg_box.exec_()
+                else:
+                    self.msg_box.setText(
+                        f"Un cliente con il numero di telefono {telefono} è già presente.")
+                    self.msg_box.setIcon(QMessageBox.Warning)
+                    self.msg_box.exec_()
+
+
 
         except Exception as e:
             self.msg_box.setText(f"Errore durante l'inserimento del cliente: {e}")
             self.msg_box.setIcon(QMessageBox.Critical)
             self.msg_box.exec_()
+
 
     def reset_clicked(self):
         self.nome_entry.clear()

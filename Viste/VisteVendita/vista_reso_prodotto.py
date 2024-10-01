@@ -1,7 +1,7 @@
 import sys
 from functools import partial
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
-    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QLineEdit
+    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QLineEdit, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
@@ -240,14 +240,22 @@ class VistaResoProdotto(QMainWindow):
     # Metodo per effetuare il reso del prodotto (aumenta giacenza e carica wallet cliente)
     def reso_prodotto(self, row_data):
         from Controls.gestore_vendite import GestoreVendite
-
+        self.msg_box = QMessageBox()
         # Estrazione dei dati dalla riga
         id_cliente = row_data[1]
         codice_vendita = row_data[6]
         id_prodotto = row_data[3]
         quantita = row_data[4]
         prezzo = row_data[9]
-        GestoreVendite().reso_prodotto(id_prodotto,codice_vendita,quantita,float(prezzo),id_cliente)
+        reso = GestoreVendite().reso_prodotto(id_prodotto,codice_vendita,quantita,float(prezzo),id_cliente)
+        if(reso == True):
+            self.msg_box.setText("Reso del prodotto avvenuto con successo.")
+            self.msg_box.setIcon(QMessageBox.Information)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"Errore durante l'aggiornamento del wallet: {reso}")
+            self.msg_box.setIcon(QMessageBox.Critical)
+            self.msg_box.exec_()
 
         row_idx = self.table_widget.currentRow()
 

@@ -1,6 +1,6 @@
 import sys
 from PyQt5.QtWidgets import QApplication, QMainWindow, QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget, \
-    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel
+    QHBoxLayout, QPushButton, QSpacerItem, QSizePolicy, QLabel, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QDateTime
 from PyQt5.QtGui import QFont
 
@@ -191,7 +191,16 @@ class VistaStampaClienti(QMainWindow):
     # Metodo che rimanda alla stampa del pdf dei clienti
     def stampa_pdf_clienti(self):
         from Controls.gestore_clienti import GestoreClienti
-        GestoreClienti().stampa_pdf_clienti()
+        gestore = GestoreClienti().stampa_pdf_clienti()
+        self.msg_box = QMessageBox()
+        if (gestore == False):
+            self.msg_box.setText(f"Errore durante la creazione del PDF")
+            self.msg_box.setIcon(QMessageBox.Critical)
+            self.msg_box.exec_()
+        else:
+            self.msg_box.setText(f"PDF generato con successo: {gestore}")
+            self.msg_box.setIcon(QMessageBox.Warning)
+            self.msg_box.exec_()
 
     # Metodo per il caricamento dei dati
     def load_data(self):
