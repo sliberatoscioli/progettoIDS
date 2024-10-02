@@ -1,8 +1,6 @@
 import os
 import pickle
 import unittest
-from PyQt5.QtWidgets import QApplication
-
 from Attivita.dipendente import Dipendente
 from Controls.gestore_dipendenti import GestoreDipendenti
 

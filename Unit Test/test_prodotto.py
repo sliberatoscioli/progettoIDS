@@ -1,8 +1,6 @@
 import os
 import pickle
 import unittest
-from PyQt5.QtWidgets import QApplication
-
 from Attivita.prodotto import Prodotto
 from Controls.gestore_prodotti import GestoreProdotti
 

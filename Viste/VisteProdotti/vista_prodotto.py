@@ -153,7 +153,7 @@ class VistaProdotto(QWidget):
 
         # Pulsanti simmetrici
         grid_layout.addWidget(
-            self.get_colored_button("🧢👖 Inserisci Prodotto 👕👗", "#32CD32", "#ffffff", self.go_inserisci_prodotto), 0, 0
+            self.get_colored_button(" Inserisci Prodotto\n 👕🧢👖", "#32CD32", "#ffffff", self.go_inserisci_prodotto), 0, 0
         )
         grid_layout.addWidget(
             self.get_colored_button("Lista prodotti \n in magazzino 📦📄", "#F1C40F", "#ffffff", self.go_stampa_magazzino), 0, 1
@@ -162,7 +162,7 @@ class VistaProdotto(QWidget):
             self.get_colored_button("Ottieni info prodotto \n Elimina prodotto 📄❌", "#FF4500", "#ffffff", self.go_vista_ottieni_info_prodotto), 1, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Riassortimento Automatico\nProdotto ⚙", "#2980B9", "#ffffff", self.go_riassortimento), 1, 1
+            self.get_colored_button("Riassortimento automatico\nprodotto ⚙", "#2980B9", "#ffffff", self.go_riassortimento), 1, 1
         )
 
         main_layout.addLayout(grid_layout)

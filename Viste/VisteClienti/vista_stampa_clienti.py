@@ -119,7 +119,7 @@ class VistaStampaClienti(QMainWindow):
         main_layout.addWidget(self.title_bar)
 
         # Titolo della finestra
-        self.title_label = QLabel("Clienti del Negozio", self)
+        self.title_label = QLabel("LISTA CLIENTI DEL NEGOZIO", self)
         self.title_label.setFont(QFont("Arial", 20, QFont.Bold))
         self.title_label.setStyleSheet("color: #ecf0f1;")
         self.title_label.setAlignment(Qt.AlignCenter)

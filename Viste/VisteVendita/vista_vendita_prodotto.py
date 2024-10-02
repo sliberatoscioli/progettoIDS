@@ -120,7 +120,7 @@ class VistaVenditaProdotto(QMainWindow):
         main_layout.addWidget(self.title_bar)
 
         # Titolo della finestra
-        self.title_label = QLabel("Prodotti inseriti nella vendita", self)
+        self.title_label = QLabel("VENDITA DI CAPI DI ABBIGLIAMENTO", self)
         self.title_label.setFont(QFont("Arial", 20, QFont.Bold))
         self.title_label.setStyleSheet("color: #ecf0f2;")
         self.title_label.setAlignment(Qt.AlignCenter)
@@ -147,7 +147,7 @@ class VistaVenditaProdotto(QMainWindow):
         self.quantity_entry = QLineEdit(self)
         self.quantity_entry.setFont(label_font)
         self.quantity_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
-        self.quantity_entry.setPlaceholderText("Inserisci Quantità")
+        self.quantity_entry.setPlaceholderText("Inserisci quantità")
         self.quantity_entry.setMinimumHeight(40)   # Altezza minima del pulsante
         form_layout.addWidget(self.quantity_entry)
 
@@ -190,7 +190,7 @@ class VistaVenditaProdotto(QMainWindow):
         self.telefono_cliente_entry = QLineEdit(self)
         self.telefono_cliente_entry.setFont(label_font)
         self.telefono_cliente_entry.setStyleSheet("color: white; background-color: #1a1a1a;")
-        self.telefono_cliente_entry.setPlaceholderText("Inserisci Numero di Telefono Cliente")
+        self.telefono_cliente_entry.setPlaceholderText("Inserisci numero di telefono Cliente")
         self.telefono_cliente_entry.setMinimumHeight(40)
         form_layout2.addWidget(self.telefono_cliente_entry)
 

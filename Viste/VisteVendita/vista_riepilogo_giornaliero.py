@@ -119,7 +119,7 @@ class VistaRiepilogoGiornaliero(QMainWindow):
         main_layout.addWidget(self.title_bar)
 
         # Titolo della finestra
-        self.title_label = QLabel("Riepilogo totale Giornaliero 🛍️️", self)
+        self.title_label = QLabel("Riepilogo totale giornaliero 🛍️️", self)
         self.title_label.setFont(QFont("Arial", 20, QFont.Bold))
         self.title_label.setStyleSheet("color: #ecf0f1;")
         self.title_label.setAlignment(Qt.AlignCenter)

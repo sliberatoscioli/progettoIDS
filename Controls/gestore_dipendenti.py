@@ -15,6 +15,7 @@ class GestoreDipendenti:
         self.lista_dipendenti = []
         self.file_path = 'Dati/Dipendenti.pkl'  # Percorso del file nella cartella "Dati"
 
+    # Metodo per l'aggiunta di un nuovo dipendente
     def aggiungi_dipendenti(self, dipendente):
         # Verifica se la cartella "Dati" esiste, altrimenti la crea
         if not os.path.exists('Dati'):
@@ -22,7 +23,7 @@ class GestoreDipendenti:
 
         # Verifica se il file pickle esiste già
         if os.path.exists(self.file_path):
-            # Carica i dipendenti esistenti
+            # Caricamento dei dipendenti esistenti
             with open(self.file_path, 'rb') as file:
                 self.lista_dipendenti = pickle.load(file)
 
@@ -30,25 +31,26 @@ class GestoreDipendenti:
         for c in self.lista_dipendenti:
             if c.get_telefono() == numero_telefono_nuovo:
                 return False
-        # Aggiungi il nuovo dipendente alla lista
+        # Aggiunta del nuovo dipendente alla lista
         self.lista_dipendenti.append(dipendente)
 
-        # Salva la lista aggiornata nel file pickle
+        # Salvataggio della lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(self.lista_dipendenti, file)
 
         return True
 
+    # Metodo per la rimozione del dipendente
     def rimuovi_dipendenti(self, IDdipendente):
         # Verifica se il file pickle esiste
         if not os.path.exists(self.file_path):
             return
 
-        # Carica i dipendenti esistenti
+        # Caricamento dei dipendenti esistenti
         with open(self.file_path, 'rb') as file:
             self.lista_dipendenti = pickle.load(file)
 
-        # Trova e rimuovi il dipendente con l'ID specificato
+        # Ricerca e rimozione del dipendente con l'ID specificato
         dipendente_trovato = False
         nuova_lista = []
         for dipendente in self.lista_dipendenti:
@@ -62,11 +64,12 @@ class GestoreDipendenti:
         if not dipendente_trovato:
             return
 
-        # Salva la lista aggiornata nel file pickle
+        # Salvataggio della lista aggiornata nel file pickle
         with open(self.file_path, 'wb') as file:
             pickle.dump(nuova_lista, file)
         return True
 
+    # Metodo che restituisce la lista dei dipendenti
     def ritorna_lista_dipendenti(self):
         try:
             # Verifica se il file dei dipendenti esiste
@@ -74,7 +77,7 @@ class GestoreDipendenti:
                 print("Il file dei dipendenti non esiste.")
                 return []
 
-            # Carica i dipendenti dal file pickle
+            # Caricamento dei dipendenti dal file pickle
             with open(self.file_path, 'rb') as file:
                 dipendenti = pickle.load(file)
 
@@ -88,22 +91,24 @@ class GestoreDipendenti:
             print("Il file dei dipendenti non esiste.")
             return []
 
+    # Metodo che restituisce un dipendente dato il suo ID
     def ritorna_dipendente_per_id(self, id):
         dipendenti = self.ritorna_lista_dipendenti()
 
-        # Cerca il dipendente con l'ID specificato
+        # Ricerca del dipendente con l'ID specificato
         for dipendente in dipendenti:
             if dipendente.get_id() == id:
                 return dipendente
         return None
 
+    # Metodo che verifica l'esistenza del dipendente
     def esiste_dipendente(self, IDdipendente):
         # Verifica se il file pickle esiste
         if not os.path.exists(self.file_path):
             print("Il file dei dipendenti non esiste.")
             return False
 
-        # Carica i dipendenti esistenti
+        # Caricamento dei dipendenti esistenti
         with open(self.file_path, 'rb') as file:
             dipendenti = pickle.load(file)
 
@@ -114,15 +119,16 @@ class GestoreDipendenti:
 
         return 0
 
+    # Metodo che stampa un report dei dipendenti
     def report_dipendenti(self):
-        # Carica la lista dei clienti
+        # Caricamento della lista dei clienti
         lista_clienti = GestoreClienti().ritorna_lista_clienti()
 
         # Verifica se il file dei dipendenti esiste
         if not os.path.exists(self.file_path):
             return False
 
-        # Carica i dipendenti esistenti
+        # Caricamento dei dipendenti esistenti
         with open(self.file_path, 'rb') as file:
             dipendenti = pickle.load(file)
 
@@ -132,7 +138,7 @@ class GestoreDipendenti:
         if not os.path.exists(cartella_report):
             os.makedirs(cartella_report)
 
-        # Crea la data
+        # Creazione data
         data_corrente = datetime.now().strftime('%Y-%m-%d')
 
         # Percorso completo del file PDF
@@ -148,7 +154,7 @@ class GestoreDipendenti:
             numero_clienti = sum(
                 1 for cliente in lista_clienti if cliente.get_dipendente_inserimento().get_id() == dipendente_id)
 
-            # Aggiungi le informazioni alla tabella
+            # Aggiunta delle informazioni alla tabella
             data.append([
                 dipendente.get_id(),
                 dipendente.get_nome(),

@@ -153,7 +153,7 @@ class VistaCliente(QWidget):
             self.get_colored_button("Inserisci Cliente 🧑‍💼", "#32CD32", "#ffffff", self.go_inserisci_cliente), 0, 0
         )
         grid_layout.addWidget(
-            self.get_colored_button("Ricerca e Gestisci Cliente🔍", "#F1C40F", "#ffffff", self.go_ricerca_cliente), 0, 1
+            self.get_colored_button("Ricerca e Gestione Cliente🔍", "#F1C40F", "#ffffff", self.go_ricerca_cliente), 0, 1
         )
         grid_layout.addWidget(
             self.get_colored_button("Stampa Clienti  📄", "#FF4500", "#ffffff", self.go_stampa_clienti), 1, 0

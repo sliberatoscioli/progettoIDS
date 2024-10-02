@@ -1,8 +1,6 @@
 import unittest
 import os
 import pickle
-from PyQt5.QtWidgets import QApplication
-
 from Controls.gestore_clienti import GestoreClienti
 from Attivita.cliente import Cliente
 

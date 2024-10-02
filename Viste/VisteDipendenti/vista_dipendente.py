@@ -148,13 +148,13 @@ class vistaDipendente(QWidget):
         grid_layout.setSpacing(60)
 
         grid_layout.addWidget(
-            self.get_colored_button("Inserisci dipendente 👷", "#32CD32", "#ffffff", self.go_inserisci_dipendente), 0, 0
+            self.get_colored_button("Inserisci Dipendente 👷", "#32CD32", "#ffffff", self.go_inserisci_dipendente), 0, 0
         )
         grid_layout.addWidget(
             self.get_colored_button("Rimuovi Dipendente  ❌", "#F1C40F", "#ffffff", self.go_rimuovi_cliente), 0, 1
         )
         grid_layout.addWidget(
-            self.get_colored_button("Report dipendente  📊‍", "#FF4500", "#ffffff", self.go_report), 1, 0
+            self.get_colored_button("Report Dipendente  📊‍", "#FF4500", "#ffffff", self.go_report), 1, 0
         )
         grid_layout.addWidget(
             self.get_colored_button("HOME  🏠", "#2980B9", "#ffffff", self.go_home), 1, 1
@@ -200,14 +200,14 @@ class vistaDipendente(QWidget):
 
     def go_report(self):
         from Controls.gestore_dipendenti import GestoreDipendenti
-        gestore_dipendenti = GestoreDipendenti()
+        gestore_dipendenti = GestoreDipendenti().report_dipendenti()
         self.msg_box = QMessageBox()
-        if (gestore_dipendenti.report_dipendenti() == False):           #Collegamento al metodo della classe gestore
+        if (gestore_dipendenti == False):           #Collegamento al metodo della classe gestore
             self.msg_box.setText("Il file dei dipendenti non esiste.")
             self.msg_box.setIcon(QMessageBox.Warning)
             self.msg_box.exec_()
         else:
-            self.msg_box.setText(f"Report generato con successo: {gestore_dipendenti.report_dipendenti()}")
+            self.msg_box.setText(f"Report generato con successo: {gestore_dipendenti }")
             self.msg_box.setIcon(QMessageBox.Information)
             self.msg_box.exec_()
 
