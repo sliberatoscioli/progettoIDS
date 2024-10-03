@@ -44,7 +44,7 @@ class Prodotto:
         return self.quantita
 
     def set_giacenza(self):
-        self.giacenza = 25
+        self.giacenza = 10
 
     def set_quantita(self, quantita):
         if quantita > 0:

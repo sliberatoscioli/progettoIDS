@@ -108,7 +108,7 @@ class GestoreProdotti:
         prodotti = self.ritorna_lista_prodotti()
 
         # Ricerca dei prodotti con giacenza inferiore a 10
-        prodotti_critici = [prodotto for prodotto in prodotti if int (prodotto.get_giacenza()) < 10]
+        prodotti_critici = [prodotto for prodotto in prodotti if int (prodotto.get_giacenza()) < 5]
 
         return prodotti_critici
 
