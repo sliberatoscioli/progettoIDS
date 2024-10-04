@@ -7,4 +7,4 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     login_form = LoginForm()  # Creazione di un'istanza di LoginForm
     login_form.showFullScreen()  # Finestra in modalità a schermo intero
-    sys.exit(app.exec_())  # Avvio dell'applicazione
+    sys.exit(app.exec_())  # Avvio del loop dell'applicazione
