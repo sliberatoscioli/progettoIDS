@@ -303,6 +303,14 @@ class VistaVenditaProdotto(QMainWindow):
         discount_group_box.setLayout(discount_layout)
         main_layout.addWidget(discount_group_box)
 
+        # Pulsante "Inserisci Nuovo Cliente"
+        nuovo_cliente_button = QPushButton("INSERISCI NUOVO CLIENTE", self)
+        nuovo_cliente_button.setFont(button_font)
+        nuovo_cliente_button.setStyleSheet("color: white; background-color: red;")
+        nuovo_cliente_button.setMinimumHeight(50)
+        nuovo_cliente_button.clicked.connect(self.open_nuovo_cliente)  # Collega il pulsante al metodo
+        main_layout.addWidget(nuovo_cliente_button)
+
     # Metodo per l'applicazione dello sconto
     def applica_sconto(self):
         if self.discount_none_radio.isChecked():
@@ -577,6 +585,11 @@ class VistaVenditaProdotto(QMainWindow):
     def update_total_cost(self):
         self.total_cost_label.setText(f"Spesa Totale: €{self.total_cost:.2f}")
 
+    def open_nuovo_cliente(self):
+        from Viste.VisteClienti.vista_inserisci_cliente import InserisciCliente
+        self.inserisci_cliente_view = InserisciCliente()
+        self.inserisci_cliente_view.resize(500, 600)  # Dimensione della finestra ridotta
+        self.inserisci_cliente_view.show()
 
 # Metodo principale per avviare l'applicazione
 def main():
