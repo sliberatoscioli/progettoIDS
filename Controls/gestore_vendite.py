@@ -303,29 +303,14 @@ class GestoreVendite:
         with open(percorso_file_prodotti, 'rb') as file_prodotti:
             lista_prodotti = pickle.load(file_prodotti)
 
-
-        # Ricerca del cliente per aggiornare il saldo del wallet
-        cliente_trovato = None
-        for cliente in lista_clienti:
-            if cliente.get_id_cliente() == id_cliente:
-                cliente_trovato = cliente
-                break
-
-        if cliente_trovato:
-            # Calcolo del credito da restituire
-            wallet_cliente = cliente_trovato.get_saldo_wallet()
-            prezzo_wallet = wallet_cliente+quantita * prezzo
-            try:
-                # Aggiornamento del saldo
-                cliente_trovato.set_saldo_wallet(prezzo_wallet)
-            except ValueError as e:
-                return e # Interrompe l'operazione in caso di errore
+        sconto_applicato = 0.0
 
         # Ricerca dell'acquisto corrispondente al codice vendita e rimozione del prodotto
         acquisto_trovato = None
         for acquisto in lista_acquisti:
             if acquisto.get_codice_vendita() == codice_vendita:
                 acquisto_trovato = acquisto
+                sconto_applicato = acquisto_trovato.get_sconto()
                 break
 
         if acquisto_trovato:
@@ -335,7 +320,31 @@ class GestoreVendite:
                      prodotto.get_id_prodotto() == id_prodotto)
             )
 
-        # Ricerca del prodotto e aggiornamento delle giacenza
+            # Ricerca del cliente per aggiornare il saldo del wallet
+            cliente_trovato = None
+            for cliente in lista_clienti:
+                if cliente.get_id_cliente() == id_cliente:
+                    cliente_trovato = cliente
+                    break
+
+            if cliente_trovato:
+                wallet_cliente = cliente_trovato.get_saldo_wallet()
+
+                # Calcolo dell'importo basato sullo sconto
+                if sconto_applicato > 0:
+                    # Applicazione sconto se > 0
+                    prezzo_scontato = prezzo * (1 - sconto_applicato)
+                    prezzo_wallet = wallet_cliente + quantita * prezzo_scontato
+                else:
+                    # Se non c'è lo sconto, non lo si applica
+                    prezzo_wallet = wallet_cliente + quantita * prezzo
+                try:
+                    # Aggiornamento del saldo
+                    cliente_trovato.set_saldo_wallet(prezzo_wallet)
+                except ValueError as e:
+                    return e
+
+        # Ricerca del prodotto e aggiornamento della giacenza
         prodotto_trovato = None
         for prodotto in lista_prodotti:
             if prodotto.get_id_prodotto() == id_prodotto:

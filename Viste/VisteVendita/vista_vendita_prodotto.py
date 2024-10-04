@@ -108,6 +108,7 @@ class VistaVenditaProdotto(QMainWindow):
     def __init__(self):
         super().__init__()
         # Impostazioni della finestra
+        self.sconto_applicato = 0.0
         self.setWindowTitle("Tabella Prodotto")
         self.setGeometry(100, 100, 800, 600)
         self.setStyleSheet("background-color: #2c3e50;")
@@ -325,6 +326,8 @@ class VistaVenditaProdotto(QMainWindow):
             discount = 0.40
         elif self.discount_50_radio.isChecked():
             discount = 0.50
+
+        self.sconto_applicato = discount
 
         # Calcolo del prezzo totale scontato
         discounted_total = self.total_cost * (1 - discount)
@@ -546,7 +549,7 @@ class VistaVenditaProdotto(QMainWindow):
 
         # Creazione dell'oggetto Acquisto
         id = GestoreVendite().ritorna_ultimo_ID_acquisto() + 1
-        acquisto = Acquisto(id,cliente[0],prodotti,datetime.now().strftime("%Y-%m-%d %H:%M:%S"),metodo_pagamento,codice)
+        acquisto = Acquisto(id,cliente[0],prodotti,datetime.now().strftime("%Y-%m-%d %H:%M:%S"),metodo_pagamento,codice, self.sconto_applicato)
 
         #Salvataggio acquisti nel gestore vendite
         vendita = GestoreVendite().aggiungi_acquisto(acquisto) #Memorizzazione dell'acquisto nel file
