@@ -8,6 +8,9 @@ from reportlab.lib.units import mm
 from reportlab.lib import colors
 import os
 
+from Controls.gestore_prodotti import GestoreProdotti
+
+
 class GestoreVendite:
 
     def __init__(self):
@@ -302,6 +305,9 @@ class GestoreVendite:
 
         with open(percorso_file_prodotti, 'rb') as file_prodotti:
             lista_prodotti = pickle.load(file_prodotti)
+
+        if GestoreProdotti().ritorna_prodotto_ID(id_prodotto) ==  None:
+            return False
 
         sconto_applicato = 0.0
 

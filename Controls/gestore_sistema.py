@@ -57,7 +57,7 @@ class GestoreSistema:
             conn.close()
 
             # Notifica di creazione database e inserimento utente di default
-            self.msg_box.setText("Database creato e utente di default 'admin/admin' inserito.")
+            self.msg_box.setText("Utente e Password di default 'admin/admin'.")
             self.msg_box.setIcon(QMessageBox.Information)
             self.msg_box.exec_()
 

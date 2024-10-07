@@ -252,10 +252,15 @@ class VistaResoProdotto(QMainWindow):
             self.msg_box.setText("Reso del prodotto avvenuto con successo.")
             self.msg_box.setIcon(QMessageBox.Information)
             self.msg_box.exec_()
+        elif (reso == False):
+            self.msg_box.setText(f"Impossibile effettuare il reso")
+            self.msg_box.setIcon(QMessageBox.Critical)
+            self.msg_box.exec_()
         else:
             self.msg_box.setText(f"Errore durante l'aggiornamento del wallet: {reso}")
             self.msg_box.setIcon(QMessageBox.Critical)
             self.msg_box.exec_()
+
 
         row_idx = self.table_widget.currentRow()
 
